@@ -3,7 +3,7 @@
   "name": "Jackal AIoT 控制面板",
   "icons": [
     {
-      "src": "./Bg_JackalAIoT.jpg",
+      "src": "./Icon_Jackal.jpg",
       "sizes": "512x512",
       "type": "image/jpeg"
     }
@@ -12,4 +12,5 @@
   "display": "standalone",
   "theme_color": "#007aff",
   "background_color": "#1a1a1a"
+
 }
