@@ -4,50 +4,29 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AIoT Platform 控制面板</title>
-    
     <link rel="manifest" href="./manifest.json">
     <meta name="theme-color" content="#007aff">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <link rel="apple-touch-icon" href="./Icon_Jackal.jpg">
-
     <style>
-        body {
-            margin: 0; padding: 0; display: flex; justify-content: center; align-items: center;
-            min-height: 100vh; background: url('./Bg_JackalAIoT.jpg') no-repeat center center fixed;
-            background-size: cover; background-color: #1a1a1a;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-        }
-        .container {
-            background: rgba(255, 255, 255, 0.15); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
-            padding: 40px; border-radius: 25px; box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
-            width: 90%; max-width: 450px; text-align: center; border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-        h2 { color: #ffffff; margin-bottom: 25px; text-shadow: 0 2px 4px rgba(0,0,0,0.3); }
-        .ui-element { width: 100%; padding: 15px; margin: 12px 0; border-radius: 12px; border: none; font-size: 16px; transition: all 0.3s ease; }
-        .btn { cursor: pointer; font-weight: bold; color: white; text-transform: uppercase; }
+        body { margin: 0; padding: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh; background: url('./Bg_JackalAIoT.jpg') no-repeat center center fixed; background-size: cover; background-color: #1a1a1a; font-family: -apple-system, sans-serif; }
+        .container { background: rgba(255, 255, 255, 0.15); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); padding: 40px; border-radius: 25px; box-shadow: 0 15px 35px rgba(0,0,0,0.4); width: 90%; max-width: 450px; text-align: center; border: 1px solid rgba(255,255,255,0.2); }
+        h2 { color: #ffffff; margin-bottom: 25px; }
+        .ui-element { width: 100%; padding: 15px; margin: 12px 0; border-radius: 12px; border: none; font-size: 16px; }
+        .btn { cursor: pointer; font-weight: bold; color: white; }
         .btn-blue { background: linear-gradient(135deg, #007aff, #0051a8); }
         .btn-green { background: linear-gradient(135deg, #34c759, #248a3d); }
         .btn-orange { background: linear-gradient(135deg, #ff9500, #ff5e00); }
         .btn-dark { background: rgba(0, 0, 0, 0.6); border: 1px solid rgba(255,255,255,0.2); }
         .display-box { background: rgba(255, 255, 255, 0.2); border: 2px dashed #007aff; color: #007aff; font-size: 28px; font-weight: bold; min-height: 50px; display: flex; justify-content: center; align-items: center; }
-        #status-bar { font-size: 12px; color: #ccc; margin-bottom: 15px; }
         #fileInput { display: none; }
     </style>
 </head>
 <body>
-
 <div class="container">
     <h2>AIoT 控制面板</h2>
-    <div id="status-bar">正在檢查伺服器狀態...</div>
-
-    <button id="push-btn" class="ui-element btn btn-orange" onclick="enableNotifications()">開啟警報通知 (Push)</button>
-    
-    <!-- 新增：警報列表按鈕 -->
-    <button class="ui-element btn btn-orange" onclick="window.location.href='alerts.html'">
-        警報列表
-    </button>
-
+    <button class="ui-element btn btn-orange" onclick="window.location.href='alerts.html'">查看警報列表 (Alerts)</button>
     <div id="numberDisplay" class="ui-element display-box">等待請求...</div>
     <button class="ui-element btn btn-blue" onclick="getRandomNumber()">請求隨機數字 (Button01)</button>
     <hr style="margin: 20px 0; opacity: 0.1;">
@@ -57,32 +36,38 @@
     <input type="file" id="fileInput" onchange="uploadFile(this.files[0])">
     <button class="ui-element btn btn-green" onclick="document.getElementById('fileInput').click()">上傳文件 (Button02)</button>
 </div>
-
 <script>
     const API_URL = "https://jackalchiu.onrender.com";
-
-    const VAPID_PUBLIC_KEY = "BGGrT_cgyFH3ZI9pPbNIVy-CF_-EqsEBDE9QHT5jq6wYOh9AUN2_4F1nkiKiCy5J1pGX6sGAJyk1ZWavzRikJMg";
-
     if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-            navigator.serviceWorker.register('./sw.js')
-                .then(reg => console.log('Service Worker 已註冊'))
-                .catch(err => console.error('Service Worker 註冊失敗', err));
-        });
+        window.addEventListener('load', () => { navigator.serviceWorker.register('./sw.js'); });
     }
-
-    // ... 其餘原有函數保持不變（enableNotifications, urlBase64ToUint8Array, wakeBackend, getRandomNumber, submitUserData, uploadFile）...
-    // （為了節省篇幅，這裡省略，你可以直接保留你原本的 script 內容）
-
-    async function wakeBackend() {
-        try { 
-            await fetch(`${API_URL}/`); 
-            document.getElementById('status-bar').innerText = "伺服器已就緒"; 
-        } catch (e) { 
-            document.getElementById('status-bar').innerText = "正在連線伺服器..."; 
-        }
+    async function getRandomNumber() {
+        try {
+            const res = await fetch(`${API_URL}/list`);
+            document.getElementById('numberDisplay').innerText = await res.json();
+        } catch (e) { alert("連線失敗"); }
     }
-    wakeBackend();
+    async function submitUserData() {
+        const val = document.getElementById('userDataInput').value;
+        if (!val) return;
+        try {
+            await fetch(`${API_URL}/list`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ note: val })
+            });
+            alert("提交成功");
+        } catch (e) { alert("提交失敗"); }
+    }
+    async function uploadFile(file) {
+        if (!file) return;
+        const formData = new FormData();
+        formData.append('file', file);
+        try {
+            await fetch(`${API_URL}/upload`, { method: 'POST', body: formData });
+            alert("上傳成功");
+        } catch (e) { alert("上傳失敗"); }
+    }
 </script>
 </body>
 </html>
