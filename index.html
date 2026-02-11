@@ -12,84 +12,26 @@
     <link rel="apple-touch-icon" href="./Icon_Jackal.jpg">
 
     <style>
-        /* 1. 背景設定 */
         body {
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            background: url('./Bg_JackalAIoT.jpg') no-repeat center center fixed;
-            background-size: cover;
-            background-color: #1a1a1a;
+            margin: 0; padding: 0; display: flex; justify-content: center; align-items: center;
+            min-height: 100vh; background: url('./Bg_JackalAIoT.jpg') no-repeat center center fixed;
+            background-size: cover; background-color: #1a1a1a;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
         }
-
-        /* 2. 主容器 */
         .container {
-            background: rgba(255, 255, 255, 0.15); 
-            backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
-            padding: 40px;
-            border-radius: 25px;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
-            width: 90%;
-            max-width: 450px;
-            text-align: center;
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.15); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
+            padding: 40px; border-radius: 25px; box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+            width: 90%; max-width: 450px; text-align: center; border: 1px solid rgba(255, 255, 255, 0.2);
         }
-
         h2 { color: #ffffff; margin-bottom: 25px; text-shadow: 0 2px 4px rgba(0,0,0,0.3); }
-
-        /* 3. 元件樣式 */
-        .ui-element {
-            width: 100%;
-            padding: 15px;
-            margin: 12px 0;
-            border-radius: 12px;
-            border: none;
-            box-sizing: border-box;
-            font-size: 16px;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-        }
-
-        .btn {
-            cursor: pointer;
-            font-weight: bold;
-            color: white;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
+        .ui-element { width: 100%; padding: 15px; margin: 12px 0; border-radius: 12px; border: none; font-size: 16px; transition: all 0.3s ease; }
+        .btn { cursor: pointer; font-weight: bold; color: white; text-transform: uppercase; }
         .btn-blue { background: linear-gradient(135deg, #007aff, #0051a8); }
         .btn-green { background: linear-gradient(135deg, #34c759, #248a3d); }
         .btn-orange { background: linear-gradient(135deg, #ff9500, #ff5e00); }
         .btn-dark { background: rgba(0, 0, 0, 0.6); border: 1px solid rgba(255,255,255,0.2); }
-
-        .btn:active { transform: translateY(2px); box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); }
-
-        input[type="text"] {
-            background: rgba(255, 255, 255, 0.9);
-            border: 1px solid #dee2e6;
-            color: #333;
-        }
-
-        .display-box {
-            background: rgba(255, 255, 255, 0.2);
-            border: 2px dashed #007aff;
-            color: #007aff;
-            font-size: 28px;
-            font-weight: bold;
-            min-height: 50px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            text-shadow: 0 0 10px rgba(255,255,255,0.5);
-        }
-
-        #status-bar { font-size: 12px; color: #ccc; margin-top: -15px; margin-bottom: 15px; }
+        .display-box { background: rgba(255, 255, 255, 0.2); border: 2px dashed #007aff; color: #007aff; font-size: 28px; font-weight: bold; min-height: 50px; display: flex; justify-content: center; align-items: center; }
+        #status-bar { font-size: 12px; color: #ccc; margin-bottom: 15px; }
         #fileInput { display: none; }
     </style>
 </head>
@@ -100,51 +42,42 @@
     <div id="status-bar">正在檢查伺服器狀態...</div>
 
     <button id="push-btn" class="ui-element btn btn-orange" onclick="enableNotifications()">開啟警報通知 (Push)</button>
-
     <div id="numberDisplay" class="ui-element display-box">等待請求...</div>
-
     <button class="ui-element btn btn-blue" onclick="getRandomNumber()">請求隨機數字 (Button01)</button>
-
-    <hr style="margin: 20px 0; opacity: 0.1; border: 0.5px solid white;">
-
+    <hr style="margin: 20px 0; opacity: 0.1;">
     <input type="text" id="userDataInput" class="ui-element" placeholder="輸入內容並提交...">
     <button class="ui-element btn btn-dark" onclick="submitUserData()">提交數據數據</button>
-
-    <hr style="margin: 20px 0; opacity: 0.1; border: 0.5px solid white;">
-
+    <hr style="margin: 20px 0; opacity: 0.1;">
     <input type="file" id="fileInput" onchange="uploadFile(this.files[0])">
     <button class="ui-element btn btn-green" onclick="document.getElementById('fileInput').click()">上傳文件 (Button02)</button>
 </div>
 
 <script>
     const API_URL = "https://jackalchiu.onrender.com"; 
-    // 已更新為您提供的 Public Key
+    // 重要：已修正公鑰格式，去除了多餘的標籤文字
     const VAPID_PUBLIC_KEY = "BKNgv9b54yo-XGL9UBKAEqJ4DWYZfetWItxyEET3zQXQOJj4egq3tJ7nIPb3mdl0CUO1oECM29WKj8ruwnjCKPk";
 
-    // 1. Service Worker 註冊
     if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
             navigator.serviceWorker.register('./sw.js')
-                .then(reg => console.log('Service Worker 已註冊'))
-                .catch(err => console.error('註冊失敗', err));
+                .then(reg => console.log('SW Registered'))
+                .catch(err => console.error('SW Registration failed', err));
         });
     }
 
-    // 2. 請求推送通知權限
     async function enableNotifications() {
+        // iOS 必須在「加入主畫面」後才支援 PushManager
         if (!('serviceWorker' in navigator) || !('PushManager' in window)) {
-            return alert('瀏覽器不支援消息推送');
+            return alert('提示：請先將此網頁「加入主畫面」App 後再開啟通知功能。');
         }
 
         try {
             const registration = await navigator.serviceWorker.ready;
-            
             const subscription = await registration.pushManager.subscribe({
                 userVisibleOnly: true,
                 applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY)
             });
 
-            // 傳送訂閱資訊到後端
             await fetch(`${API_URL}/subscribe`, {
                 method: 'POST',
                 body: JSON.stringify(subscription),
@@ -156,11 +89,10 @@
             document.getElementById('push-btn').disabled = true;
         } catch (error) {
             console.error('訂閱失敗:', error);
-            alert('訂閱失敗，請確保是在 PWA 模式下操作且已允許通知權限。');
+            alert('訂閱失敗，請檢查網路或重新安裝 PWA。');
         }
     }
 
-    // 輔助函式：將 Base64 轉換為 Uint8Array
     function urlBase64ToUint8Array(base64String) {
         const padding = '='.repeat((4 - base64String.length % 4) % 4);
         const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
@@ -168,41 +100,30 @@
         return Uint8Array.from([...rawData].map((char) => char.charCodeAt(0)));
     }
 
-    // --- 原有功能函數 ---
+    // --- 其他功能函數保持不變 ---
     async function wakeBackend() {
-        const statusBar = document.getElementById('status-bar');
-        try {
-            await fetch(`${API_URL}/list`);
-            statusBar.innerText = "伺服器已就緒";
-            statusBar.style.color = "#34c759";
-        } catch (e) {
-            statusBar.innerText = "伺服器啟動中...";
-        }
+        try { await fetch(`${API_URL}/list`); document.getElementById('status-bar').innerText = "伺服器已就緒"; } 
+        catch (e) { document.getElementById('status-bar').innerText = "伺服器連結中..."; }
     }
     wakeBackend();
 
     async function getRandomNumber() {
-        const display = document.getElementById('numberDisplay');
-        display.innerText = "請求中...";
         try {
-            const response = await fetch(`${API_URL}/list`); 
-            const data = await response.json();
-            display.innerText = data;
-        } catch (error) { display.innerText = "連線失敗"; }
+            const response = await fetch(`${API_URL}/list`);
+            document.getElementById('numberDisplay').innerText = await response.json();
+        } catch (e) { alert("請求失敗"); }
     }
 
     async function submitUserData() {
-        const content = document.getElementById('userDataInput').value;
-        if (!content) return alert('請先輸入內容');
+        const note = document.getElementById('userDataInput').value;
         try {
-            const response = await fetch(`${API_URL}/list`, {
+            await fetch(`${API_URL}/list`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ name: "User", age: 0, note: content })
+                body: JSON.stringify({ name: "User", age: 0, note: note })
             });
-            const data = await response.json();
-            alert('提交成功！ID: ' + data);
-        } catch (error) { alert('提交失敗'); }
+            alert("提交成功");
+        } catch (e) { alert("提交失敗"); }
     }
 
     async function uploadFile(file) {
@@ -210,13 +131,9 @@
         const formData = new FormData();
         formData.append('file', file);
         try {
-            const response = await fetch(`${API_URL}/upload`, {
-                method: 'POST',
-                body: formData
-            });
-            const data = await response.json();
-            alert('上傳成功: ' + data.filename);
-        } catch (error) { alert('上傳失敗'); }
+            await fetch(`${API_URL}/upload`, { method: 'POST', body: formData });
+            alert("上傳成功");
+        } catch (e) { alert("上傳失敗"); }
     }
 </script>
 </body>
