@@ -5,8 +5,9 @@ const CACHE_NAME = 'aiot-v3'; // 修改圖示或功能後，提升版本號以�
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
+  './alerts.html',        // ← 新增這一行
   './Bg_JackalAIoT.jpg',
-  './Icon_Jackal.jpg',   // 您的 PWA 圖示
+  './Icon_Jackal.jpg',
   './manifest.json'      
 ];
 
@@ -89,3 +90,4 @@ self.addEventListener('notificationclick', (event) => {
     clients.openWindow('/') 
   );
 });
+
