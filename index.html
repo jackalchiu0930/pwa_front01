@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AIoT Platform 控制面板</title>
+    
+    <link rel="manifest" href="./manifest.json">
+    <meta name="theme-color" content="#007aff">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="apple-touch-icon" href="./Bg_JackalAIoT.jpg">
+
+    <style>
+        /* 1. 背景設定 */
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            /* 確保背景覆蓋全螢幕 */
+            background: url('./Bg_JackalAIoT.jpg') no-repeat center center fixed;
+            background-size: cover;
+            background-color: #1a1a1a;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        /* 2. 主容器：強化玻璃擬態感 */
+        .container {
+            /* 修改為半透明背景，確保背景圖透出來 */
+            background: rgba(255, 255, 255, 0.15); 
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            padding: 40px;
+            border-radius: 25px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+            width: 90%;
+            max-width: 450px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        h2 { color: #ffffff; margin-bottom: 25px; text-shadow: 0 2px 4px rgba(0,0,0,0.3); }
+
+        /* 3. 通用元件樣式 */
+        .ui-element {
+            width: 100%;
+            padding: 15px;
+            margin: 12px 0;
+            border-radius: 12px;
+            border: none;
+            box-sizing: border-box;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn {
+            cursor: pointer;
+            font-weight: bold;
+            color: white;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .btn-blue { background: linear-gradient(135deg, #007aff, #0051a8); }
+        .btn-green { background: linear-gradient(135deg, #34c759, #248a3d); }
+        .btn-dark { background: rgba(0, 0, 0, 0.6); border: 1px solid rgba(255,255,255,0.2); }
+
+        .btn:active { transform: translateY(2px); box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); }
+
+        input[type="text"] {
+            background: rgba(255, 255, 255, 0.9);
+            border: 1px solid #dee2e6;
+            color: #333;
+        }
+
+        .display-box {
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px dashed #007aff;
+            color: #007aff;
+            font-size: 28px;
+            font-weight: bold;
+            min-height: 50px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-shadow: 0 0 10px rgba(255,255,255,0.5);
+        }
+
+        /* 伺服器狀態燈 */
+        #status-bar {
+            font-size: 12px;
+            color: #ccc;
+            margin-top: -15px;
+            margin-bottom: 15px;
+        }
+
+        #fileInput { display: none; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>AIoT 控制面板</h2>
+    
+    <div id="status-bar">正在檢查伺服器狀態...</div>
+
+    <div id="numberDisplay" class="ui-element display-box">等待請求...</div>
+
+    <button class="ui-element btn btn-blue" onclick="getRandomNumber()">請求隨機數字 (Button01)</button>
+
+    <hr style="margin: 20px 0; opacity: 0.1; border: 0.5px solid white;">
+
+    <input type="text" id="userDataInput" class="ui-element" placeholder="輸入內容並提交...">
+    <button class="ui-element btn btn-dark" onclick="submitUserData()">提交數據數據</button>
+
+    <hr style="margin: 20px 0; opacity: 0.1; border: 0.5px solid white;">
+
+    <input type="file" id="fileInput" onchange="uploadFile(this.files[0])">
+    <button class="ui-element btn btn-green" onclick="document.getElementById('fileInput').click()">上傳文件 (Button02)</button>
+</div>
+
+<script>
+    const API_URL = "https://jackalchiu.onrender.com"; //
+
+    // PWA Service Worker 註冊
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('./sw.js')
+                .then(reg => console.log('PWA SW Registered'))
+                .catch(err => console.log('SW Registration failed', err));
+        });
+    }
+
+    // 自動喚醒後端偵測
+    async function wakeBackend() {
+        const statusBar = document.getElementById('status-bar');
+        try {
+            // 發送預檢請求
+            const start = Date.now();
+            await fetch(`${API_URL}/list`);
+            const end = Date.now();
+            statusBar.innerText = `伺服器已就緒 (響應: ${end - start}ms)`;
+            statusBar.style.color = "#34c759";
+        } catch (e) {
+            statusBar.innerText = "伺服器休眠中，請稍候...";
+            statusBar.style.color = "#ffcc00";
+        }
+    }
+    wakeBackend();
+
+    async function getRandomNumber() {
+        const display = document.getElementById('numberDisplay');
+        display.innerText = "請求中...";
+        try {
+            const response = await fetch(`${API_URL}/list`); //
+            const data = await response.json();
+            display.innerText = data;
+        } catch (error) {
+            display.innerText = "連線失敗";
+        }
+    }
+
+    async function submitUserData() {
+        const content = document.getElementById('userDataInput').value;
+        if (!content) return alert('請先輸入內容');
+        try {
+            const response = await fetch(`${API_URL}/list`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name: "User", age: 0, note: content })
+            });
+            const data = await response.json();
+            alert('提交成功！ID: ' + data);
+        } catch (error) {
+            alert('提交失敗');
+        }
+    }
+
+    async function uploadFile(file) {
+        if (!file) return;
+        const formData = new FormData();
+        formData.append('file', file);
+        try {
+            const response = await fetch(`${API_URL}/upload`, {
+                method: 'POST',
+                body: formData
+            });
+            const data = await response.json();
+            alert('文件上傳成功: ' + data.filename);
+        } catch (error) {
+            alert('文件上傳失敗');
+        }
+    }
+</script>
+
+</body>
+</html>
