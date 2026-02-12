@@ -1,8 +1,10 @@
 const CACHE_NAME = 'aiot-list-v1';
 const ASSETS = [
   './',
+  './Starting.html',
   './index.html',
   './alerts.html',
+  './01_Starting.jpg',
   './Bg_JackalAIoT.jpg',
   './Icon_Jackal.jpg',
   './manifest.json'
