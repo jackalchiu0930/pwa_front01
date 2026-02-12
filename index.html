@@ -10,25 +10,12 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <link rel="apple-touch-icon" href="./Icon_Jackal.jpg">
     <style>
-        body { 
-            margin: 0; padding: 0; 
-            display: flex; justify-content: center; align-items: center; 
-            min-height: 100vh; 
-            background-color: #1a1a1a; 
-            font-family: -apple-system, sans-serif; 
-            overflow-x: hidden;
-        }
-        
-        /* 使用偽元素鎖定背景圖，避免內容加載時產生位移 */
+        body { margin: 0; padding: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh; background-color: #1a1a1a; font-family: -apple-system, sans-serif; overflow: hidden; }
         body::before {
-            content: "";
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
+            content: ""; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: url('./Bg_JackalAIoT.jpg') no-repeat center center;
-            background-size: cover;
-            z-index: -1;
+            background-size: cover; z-index: -1;
         }
-
         .container { background: rgba(255, 255, 255, 0.15); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); padding: 40px; border-radius: 25px; box-shadow: 0 15px 35px rgba(0,0,0,0.4); width: 90%; max-width: 450px; text-align: center; border: 1px solid rgba(255,255,255,0.2); }
         h2 { color: #ffffff; margin-bottom: 25px; }
         .ui-element { width: 100%; padding: 15px; margin: 12px 0; border-radius: 12px; border: none; font-size: 16px; }
@@ -45,13 +32,11 @@
     </style>
 </head>
 <body>
-
 <div id="wakeUpOverlay">
     <div class="loader"></div>
     <div class="countdown-text">系統休眠中，正在喚醒...</div>
     <div id="timer" style="font-size: 48px; margin-top: 10px; color: #007aff;">50s</div>
 </div>
-
 <div class="container">
     <h2>AIoT 控制面板</h2>
     <button class="ui-element btn btn-orange" onclick="window.location.href='alerts.html'">查看警報列表 (Alerts)</button>
@@ -59,15 +44,13 @@
     <button class="ui-element btn btn-blue" onclick="getRandomNumber()">請求隨機數字 (Button01)</button>
     <hr style="margin: 20px 0; opacity: 0.1;">
     <input type="text" id="userDataInput" class="ui-element" placeholder="輸入內容並提交...">
-    <button class="ui-element btn btn-dark" onclick="submitUserData()">提交數據數據</button>
+    <button class="ui-element btn btn-dark" onclick="submitUserData()">提交數據</button>
     <hr style="margin: 20px 0; opacity: 0.1;">
     <input type="file" id="fileInput" onchange="uploadFile(this.files[0])">
     <button class="ui-element btn btn-green" onclick="document.getElementById('fileInput').click()">上傳文件 (Button02)</button>
 </div>
-
 <script>
     const API_URL = "https://jackalchiu.onrender.com";
-
     window.onload = () => {
         const urlParams = new URLSearchParams(window.location.search);
         if (urlParams.get('from') !== 'splash') {
@@ -79,14 +62,13 @@
         }
         checkServerStatus();
     };
-
     async function checkServerStatus() {
         const overlay = document.getElementById('wakeUpOverlay');
         const timerText = document.getElementById('timer');
         try {
             const controller = new AbortController();
             const id = setTimeout(() => controller.abort(), 3000);
-            const res = await fetch(`${API_URL}/`, { signal: controller.signal });
+            await fetch(`${API_URL}/`, { signal: controller.signal });
             clearTimeout(id);
         } catch (e) {
             overlay.style.display = 'flex';
@@ -94,14 +76,10 @@
             const countdown = setInterval(() => {
                 timeLeft--;
                 timerText.innerText = timeLeft + "s";
-                if (timeLeft <= 0) {
-                    clearInterval(countdown);
-                    location.reload();
-                }
+                if (timeLeft <= 0) { clearInterval(countdown); location.reload(); }
             }, 1000);
         }
     }
-
     async function getRandomNumber() {
         try {
             const res = await fetch(`${API_URL}/list`);
@@ -109,7 +87,6 @@
             document.getElementById('numberDisplay').innerText = data;
         } catch (e) { alert("連線失敗"); }
     }
-
     async function submitUserData() {
         const val = document.getElementById('userDataInput').value;
         if (!val) return;
@@ -122,7 +99,6 @@
             alert("提交成功");
         } catch (e) { alert("提交失敗"); }
     }
-
     async function uploadFile(file) {
         if (!file) return;
         const formData = new FormData();
