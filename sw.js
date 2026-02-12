@@ -1,4 +1,4 @@
-const CACHE_NAME = 'aiot-v7';
+const CACHE_NAME = 'aiot-v8';
 const ASSETS = [
   './',
   './Starting.html',
