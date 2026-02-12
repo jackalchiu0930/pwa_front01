@@ -10,47 +10,82 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <link rel="apple-touch-icon" href="./Icon_Jackal.jpg">
     <style>
-        body { margin: 0; padding: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh; background-color: #1a1a1a; font-family: -apple-system, sans-serif; overflow: hidden; }
-        body::before {
-            content: ""; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: url('./Bg_JackalAIoT.jpg') no-repeat center center;
-            background-size: cover; z-index: -1;
+        /* 統一背景佈局 */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body { 
+            margin: 0; padding: 0; 
+            display: flex; justify-content: center; align-items: center; 
+            min-height: 100vh; 
+            background-color: #1a1a1a; 
+            font-family: -apple-system, sans-serif; 
+            overflow-x: hidden;
         }
-        .container { background: rgba(255, 255, 255, 0.15); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); padding: 40px; border-radius: 25px; box-shadow: 0 15px 35px rgba(0,0,0,0.4); width: 90%; max-width: 450px; text-align: center; border: 1px solid rgba(255,255,255,0.2); }
-        h2 { color: #ffffff; margin-bottom: 25px; }
-        .ui-element { width: 100%; padding: 15px; margin: 12px 0; border-radius: 12px; border: none; font-size: 16px; }
-        .btn { cursor: pointer; font-weight: bold; color: white; border: none; }
+
+        /* 套用與 Starting.html 一致的背景佈局方式 */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: url('./Bg_JackalAIoT.jpg') no-repeat center center;
+            background-size: cover;
+            z-index: -1; /* 確保在內容後方 */
+        }
+
+        .container { 
+            background: rgba(255, 255, 255, 0.12); 
+            backdrop-filter: blur(20px); 
+            -webkit-backdrop-filter: blur(20px); 
+            padding: 40px; 
+            border-radius: 25px; 
+            box-shadow: 0 15px 35px rgba(0,0,0,0.4); 
+            width: 90%; 
+            max-width: 450px; 
+            text-align: center; 
+            border: 1px solid rgba(255,255,255,0.15); 
+            z-index: 1; /* 確保在背景上方 */
+        }
+
+        h2 { color: #ffffff; margin-bottom: 25px; font-weight: 300; letter-spacing: 1px; }
+        .ui-element { width: 100%; padding: 15px; margin: 12px 0; border-radius: 12px; border: none; font-size: 16px; outline: none; }
+        .btn { cursor: pointer; font-weight: bold; color: white; transition: opacity 0.2s; }
+        .btn:active { opacity: 0.8; }
         .btn-blue { background: linear-gradient(135deg, #007aff, #0051a8); }
         .btn-green { background: linear-gradient(135deg, #34c759, #248a3d); }
         .btn-orange { background: linear-gradient(135deg, #ff9500, #ff5e00); }
-        .btn-dark { background: rgba(0, 0, 0, 0.6); border: 1px solid rgba(255,255,255,0.2); }
-        .display-box { background: rgba(255, 255, 255, 0.2); border: 2px dashed #007aff; color: #007aff; font-size: 28px; font-weight: bold; min-height: 50px; display: flex; justify-content: center; align-items: center; }
+        .btn-dark { background: rgba(0, 0, 0, 0.5); border: 1px solid rgba(255,255,255,0.2); }
+        .display-box { background: rgba(255, 255, 255, 0.1); border: 1px dashed rgba(0, 122, 255, 0.5); color: #007aff; font-size: 28px; font-weight: bold; min-height: 60px; display: flex; justify-content: center; align-items: center; }
         #fileInput { display: none; }
-        #wakeUpOverlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(10px); display: none; flex-direction: column; justify-content: center; align-items: center; z-index: 1000; color: white; text-align: center; }
-        .loader { border: 5px solid #f3f3f3; border-top: 5px solid #007aff; border-radius: 50%; width: 50px; height: 50px; animation: spin 2s linear infinite; margin-bottom: 20px; }
+
+        #wakeUpOverlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(10px); display: none; flex-direction: column; justify-content: center; align-items: center; z-index: 1000; color: white; }
+        .loader { border: 4px solid rgba(255,255,255,0.1); border-top: 4px solid #007aff; border-radius: 50%; width: 45px; height: 45px; animation: spin 1s linear infinite; margin-bottom: 20px; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
 </head>
 <body>
+
 <div id="wakeUpOverlay">
     <div class="loader"></div>
-    <div class="countdown-text">系統休眠中，正在喚醒...</div>
-    <div id="timer" style="font-size: 48px; margin-top: 10px; color: #007aff;">50s</div>
+    <div style="font-weight: 300; letter-spacing: 1px;">SYSTEM WAKING UP...</div>
+    <div id="timer" style="font-size: 48px; margin-top: 10px; color: #007aff; font-weight: bold;">50s</div>
 </div>
+
 <div class="container">
     <h2>AIoT 控制面板</h2>
     <button class="ui-element btn btn-orange" onclick="window.location.href='alerts.html'">查看警報列表 (Alerts)</button>
-    <div id="numberDisplay" class="ui-element display-box">等待請求...</div>
-    <button class="ui-element btn btn-blue" onclick="getRandomNumber()">請求隨機數字 (Button01)</button>
-    <hr style="margin: 20px 0; opacity: 0.1;">
-    <input type="text" id="userDataInput" class="ui-element" placeholder="輸入內容並提交...">
-    <button class="ui-element btn btn-dark" onclick="submitUserData()">提交數據</button>
-    <hr style="margin: 20px 0; opacity: 0.1;">
+    <div id="numberDisplay" class="ui-element display-box">...</div>
+    <button class="ui-element btn btn-blue" onclick="getRandomNumber()">請求隨機數字</button>
+    <hr style="margin: 20px 0; opacity: 0.1; border: none; height: 1px; background: white;">
+    <input type="text" id="userDataInput" class="ui-element" style="background: rgba(255,255,255,0.1); color: white;" placeholder="輸入內容...">
+    <button class="ui-element btn btn-dark" onclick="submitUserData()">提交數據數據</button>
+    <hr style="margin: 20px 0; opacity: 0.1; border: none; height: 1px; background: white;">
     <input type="file" id="fileInput" onchange="uploadFile(this.files[0])">
-    <button class="ui-element btn btn-green" onclick="document.getElementById('fileInput').click()">上傳文件 (Button02)</button>
+    <button class="ui-element btn btn-green" onclick="document.getElementById('fileInput').click()">上傳文件</button>
 </div>
+
 <script>
     const API_URL = "https://jackalchiu.onrender.com";
+
     window.onload = () => {
         const urlParams = new URLSearchParams(window.location.search);
         if (urlParams.get('from') !== 'splash') {
@@ -62,12 +97,13 @@
         }
         checkServerStatus();
     };
+
     async function checkServerStatus() {
         const overlay = document.getElementById('wakeUpOverlay');
         const timerText = document.getElementById('timer');
         try {
             const controller = new AbortController();
-            const id = setTimeout(() => controller.abort(), 3000);
+            const id = setTimeout(() => controller.abort(), 3500);
             await fetch(`${API_URL}/`, { signal: controller.signal });
             clearTimeout(id);
         } catch (e) {
@@ -80,6 +116,7 @@
             }, 1000);
         }
     }
+
     async function getRandomNumber() {
         try {
             const res = await fetch(`${API_URL}/list`);
@@ -87,6 +124,7 @@
             document.getElementById('numberDisplay').innerText = data;
         } catch (e) { alert("連線失敗"); }
     }
+
     async function submitUserData() {
         const val = document.getElementById('userDataInput').value;
         if (!val) return;
@@ -99,6 +137,7 @@
             alert("提交成功");
         } catch (e) { alert("提交失敗"); }
     }
+
     async function uploadFile(file) {
         if (!file) return;
         const formData = new FormData();
