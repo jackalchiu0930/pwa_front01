@@ -9,28 +9,79 @@
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
-        /* 鎖定 body 並設定與圖片相近的背景色，防止任何顏色閃爍 */
         html, body { 
             width: 100%; height: 100%; 
             overflow: hidden; 
-            background-color: #3b3c59; /* 根據你的圖片調整此顏色 */
+            background-color: #3b3c59; /* 與圖片底部相近的顏色 */
         }
 
-        /* 使用 fixed 定位強制覆蓋整個螢幕可視區域 */
+        /* 核心背景圖 */
         .starting-screen {
             position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
-            width: 100%; height: 100%;
-            background-image: url('01_Starting.jpg'); 
-            background-size: cover; 
-            background-position: center center;
-            background-repeat: no-repeat;
-            z-index: 9999;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: url('01_Starting.jpg') no-repeat center center;
+            background-size: cover;
+            z-index: 1;
+        }
+
+        /* 底部美化 UI 區塊 */
+        .loading-footer {
+            position: fixed;
+            bottom: 0; left: 0; width: 100%;
+            padding: 30px 20px (env(safe-area-inset-bottom, 20px)); /* 考慮手機安全區域 */
+            background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: white;
+            font-family: -apple-system, sans-serif;
+        }
+
+        .loading-text {
+            font-size: 14px;
+            letter-spacing: 2px;
+            margin-bottom: 15px;
+            opacity: 0.8;
+            font-weight: 300;
+        }
+
+        /* 進度條動畫 */
+        .progress-container {
+            width: 60%;
+            height: 3px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            width: 0%;
+            height: 100%;
+            background: #007aff;
+            box-shadow: 0 0 10px #007aff;
+            animation: grow 2.8s ease-in-out forwards;
+        }
+
+        @keyframes grow {
+            0% { width: 0%; }
+            100% { width: 100%; }
         }
     </style>
 </head>
 <body>
     <div class="starting-screen"></div>
+
+    <div class="loading-footer">
+        <div class="loading-text">SYSTEM INITIALIZING...</div>
+        <div class="progress-container">
+            <div class="progress-bar"></div>
+        </div>
+        <div style="height: 20px;"></div>
+    </div>
+
     <script>
         const delayTime = 3000; 
         setTimeout(() => {
