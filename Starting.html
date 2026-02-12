@@ -8,15 +8,22 @@
     <title>PSA iFactory</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        /* 確保全螢幕高度，背景設為黑色防止圖片加載前的白閃 */
         html, body { 
-            width: 100%; height: 100%; 
-            overflow: hidden; background-color: #ffffff; 
+            width: 100%; 
+            height: 100%; 
+            overflow: hidden; 
+            background-color: #000000; 
         }
+
         .starting-screen {
-            width: 100%; height: 100%;
+            width: 100vw;
+            height: 100vh;
             background-image: url('01_Starting.jpg'); 
-            background-size: cover; /* 自動縮放填滿螢幕 */
-            background-position: center;
+            /* cover 會裁切邊緣以填滿 100% 螢幕，不留白 */
+            background-size: cover; 
+            background-position: center center;
             background-repeat: no-repeat;
         }
     </style>
@@ -24,13 +31,11 @@
 <body>
     <div class="starting-screen"></div>
     <script>
-        // --- 設定區 ---
-        const delayTime = 3000; // 跳轉延遲 (毫秒)
-        const targetPage = "./index.html?from=splash"; // 帶參數以供 index.html 辨識
-        // --------------
-
+        // 設定 3-5 秒後跳轉 (目前設定 3000ms = 3秒)
+        const delayTime = 3000; 
         setTimeout(() => {
-            window.location.href = targetPage;
+            // 帶入 from=splash 參數讓 index.html 知道已經看過歡迎頁
+            window.location.href = "./index.html?from=splash";
         }, delayTime);
     </script>
 </body>
