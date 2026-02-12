@@ -4,49 +4,34 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>PSA iFactory</title>
     <style>
-        /* 移除所有預設邊距 */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html, body { 
+            width: 100%; height: 100%; 
+            overflow: hidden; background-color: #ffffff; 
         }
-
-        /* 鎖定視窗高度 */
-        html, body {
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
-            background-color: #ffffff;
-        }
-
-        /* 背景圖容器 */
         .starting-screen {
-            width: 100%;
-            height: 100%;
+            width: 100%; height: 100%;
             background-image: url('01_Starting.jpg'); 
-            background-size: cover; 
+            background-size: cover; /* 自動縮放填滿螢幕 */
             background-position: center;
             background-repeat: no-repeat;
         }
     </style>
 </head>
 <body>
-
     <div class="starting-screen"></div>
-
     <script>
         // --- 設定區 ---
-        const delayTime = 3000; // 這裡可以調整跳轉時間，單位為毫秒 (3000 = 3秒)
-        const targetPage = "./index.html"; // 跳轉的目標頁面
+        const delayTime = 3000; // 跳轉延遲 (毫秒)
+        const targetPage = "./index.html?from=splash"; // 帶參數以供 index.html 辨識
         // --------------
 
         setTimeout(() => {
             window.location.href = targetPage;
         }, delayTime);
     </script>
-
 </body>
 </html>
