@@ -2,7 +2,7 @@
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>AIoT Platform 控制面板</title>
     <link rel="manifest" href="./manifest.json">
     <meta name="theme-color" content="#007aff">
@@ -21,19 +21,8 @@
         .btn-dark { background: rgba(0, 0, 0, 0.6); border: 1px solid rgba(255,255,255,0.2); }
         .display-box { background: rgba(255, 255, 255, 0.2); border: 2px dashed #007aff; color: #007aff; font-size: 28px; font-weight: bold; min-height: 50px; display: flex; justify-content: center; align-items: center; }
         #fileInput { display: none; }
-
-        /* 新增：喚醒遮罩層樣式 */
-        #wakeUpOverlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(10px);
-            display: none; flex-direction: column; justify-content: center; align-items: center;
-            z-index: 1000; color: white; text-align: center;
-        }
-        .loader {
-            border: 5px solid #f3f3f3; border-top: 5px solid #007aff;
-            border-radius: 50%; width: 50px; height: 50px;
-            animation: spin 2s linear infinite; margin-bottom: 20px;
-        }
+        #wakeUpOverlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(10px); display: none; flex-direction: column; justify-content: center; align-items: center; z-index: 1000; color: white; text-align: center; }
+        .loader { border: 5px solid #f3f3f3; border-top: 5px solid #007aff; border-radius: 50%; width: 50px; height: 50px; animation: spin 2s linear infinite; margin-bottom: 20px; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         .countdown-text { font-size: 20px; font-weight: bold; }
     </style>
@@ -62,41 +51,40 @@
 <script>
     const API_URL = "https://jackalchiu.onrender.com";
 
-    // 啟動檢測與 Service Worker
     window.onload = () => {
+        // 檢查 URL 參數，確保是從歡迎頁跳轉過來的
+        const urlParams = new URLSearchParams(window.location.search);
+        const isFromSplash = urlParams.get('from') === 'splash';
+
+        if (!isFromSplash) {
+            window.location.href = "./Starting.html";
+            return; 
+        }
+
         if ('serviceWorker' in navigator) {
             navigator.serviceWorker.register('./sw.js');
         }
         checkServerStatus();
     };
 
-    // 檢測伺服器狀態
     async function checkServerStatus() {
         const overlay = document.getElementById('wakeUpOverlay');
         const timerText = document.getElementById('timer');
-        
         try {
-            // 發送一個輕量的請求來測試伺服器
             const controller = new AbortController();
-            const id = setTimeout(() => controller.abort(), 3000); // 3秒沒反應就判定可能在休眠
-
+            const id = setTimeout(() => controller.abort(), 3000);
             const res = await fetch(`${API_URL}/`, { signal: controller.signal });
             clearTimeout(id);
-            
             if (!res.ok) throw new Error();
-            console.log("伺服器已就緒");
         } catch (e) {
-            // 伺服器無回應，開啟喚醒 UI
             overlay.style.display = 'flex';
             let timeLeft = 50;
-            
             const countdown = setInterval(() => {
                 timeLeft--;
                 timerText.innerText = timeLeft + "s";
-                
                 if (timeLeft <= 0) {
                     clearInterval(countdown);
-                    location.reload(); // 時間到重新整理頁面
+                    location.reload();
                 }
             }, 1000);
         }
@@ -107,7 +95,7 @@
             const res = await fetch(`${API_URL}/list`);
             const data = await res.json();
             document.getElementById('numberDisplay').innerText = data;
-        } catch (e) { alert("連線失敗，伺服器可能正在啟動中"); }
+        } catch (e) { alert("連線失敗"); }
     }
 
     async function submitUserData() {
