@@ -9,32 +9,33 @@
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
-        /* 確保全螢幕高度，背景設為黑色防止圖片加載前的白閃 */
+        /* 使用 fixed 並寬高 100% 來鎖定螢幕，防止系統列造成的黑色區塊 */
         html, body { 
             width: 100%; 
             height: 100%; 
             overflow: hidden; 
-            background-color: #000000; 
+            background-color: #ffffff; 
         }
 
         .starting-screen {
-            width: 100vw;
-            height: 100vh;
+            position: fixed; /* 關鍵：鎖定定位 */
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
             background-image: url('01_Starting.jpg'); 
-            /* cover 會裁切邊緣以填滿 100% 螢幕，不留白 */
             background-size: cover; 
             background-position: center center;
             background-repeat: no-repeat;
+            z-index: 9999;
         }
     </style>
 </head>
 <body>
     <div class="starting-screen"></div>
     <script>
-        // 設定 3-5 秒後跳轉 (目前設定 3000ms = 3秒)
         const delayTime = 3000; 
         setTimeout(() => {
-            // 帶入 from=splash 參數讓 index.html 知道已經看過歡迎頁
             window.location.href = "./index.html?from=splash";
         }, delayTime);
     </script>
