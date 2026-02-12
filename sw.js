@@ -1,8 +1,9 @@
-const CACHE_NAME = 'aiot-v14';
+const CACHE_NAME = 'aiot-v15'; // 升級版本號
 const ASSETS = [
   './',
   './Starting.html',
-  './index.html',
+  './index.html',  // 這是新的主首頁
+  './test.html',   // 這是原本的 index.html
   './alerts.html',
   './01_Starting.jpg',
   './Bg_JackalAIoT.jpg',
