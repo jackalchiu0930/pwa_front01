@@ -3,150 +3,226 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>AIoT Platform 控制面板</title>
+    <title>AIoT Platform - Home</title>
     <link rel="manifest" href="./manifest.json">
     <meta name="theme-color" content="#1a1a1a">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <link rel="apple-touch-icon" href="./Icon_Jackal.jpg">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        /* 統一背景佈局 */
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         
-        body { 
-            margin: 0; padding: 0; 
-            display: flex; justify-content: center; align-items: center; 
-            min-height: 100vh; 
-            background-color: #1a1a1a; 
-            font-family: -apple-system, sans-serif; 
+        body {
+            font-family: -apple-system, "SF Pro Display", "Helvetica Neue", sans-serif;
+            background-color: #1a1a1a;
+            color: white;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
             overflow-x: hidden;
         }
 
-        /* 套用與 Starting.html 一致的背景佈局方式 */
+        /* 全域背景 */
         body::before {
             content: "";
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
             background: url('./Bg_JackalAIoT.jpg') no-repeat center center;
             background-size: cover;
-            z-index: -1; /* 確保在內容後方 */
+            z-index: -1;
         }
 
-        .container { 
-            background: rgba(255, 255, 255, 0.12); 
-            backdrop-filter: blur(20px); 
-            -webkit-backdrop-filter: blur(20px); 
-            padding: 40px; 
-            border-radius: 25px; 
-            box-shadow: 0 15px 35px rgba(0,0,0,0.4); 
-            width: 90%; 
-            max-width: 450px; 
-            text-align: center; 
-            border: 1px solid rgba(255,255,255,0.15); 
-            z-index: 1; /* 確保在背景上方 */
+        .header {
+            width: 90%;
+            max-width: 500px;
+            padding-top: 60px;
+            text-align: left;
         }
 
-        h2 { color: #ffffff; margin-bottom: 25px; font-weight: 300; letter-spacing: 1px; }
-        .ui-element { width: 100%; padding: 15px; margin: 12px 0; border-radius: 12px; border: none; font-size: 16px; outline: none; }
-        .btn { cursor: pointer; font-weight: bold; color: white; transition: opacity 0.2s; }
-        .btn:active { opacity: 0.8; }
-        .btn-blue { background: linear-gradient(135deg, #007aff, #0051a8); }
-        .btn-green { background: linear-gradient(135deg, #34c759, #248a3d); }
-        .btn-orange { background: linear-gradient(135deg, #ff9500, #ff5e00); }
-        .btn-dark { background: rgba(0, 0, 0, 0.5); border: 1px solid rgba(255,255,255,0.2); }
-        .display-box { background: rgba(255, 255, 255, 0.1); border: 1px dashed rgba(0, 122, 255, 0.5); color: #007aff; font-size: 28px; font-weight: bold; min-height: 60px; display: flex; justify-content: center; align-items: center; }
-        #fileInput { display: none; }
+        .logo-area { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+        .psa-logo { font-weight: bold; font-size: 24px; color: #E11A22; } /* 模擬 PSA 紅色 */
+        .sub-logo { font-size: 12px; opacity: 0.8; }
 
-        #wakeUpOverlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(10px); display: none; flex-direction: column; justify-content: center; align-items: center; z-index: 1000; color: white; }
-        .loader { border: 4px solid rgba(255,255,255,0.1); border-top: 4px solid #007aff; border-radius: 50%; width: 45px; height: 45px; animation: spin 1s linear infinite; margin-bottom: 20px; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .tagline { font-size: 18px; font-weight: 300; margin: 15px 0; letter-spacing: 1px; }
+
+        /* 搜尋框 */
+        .search-bar {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 12px;
+            padding: 12px 15px;
+            display: flex;
+            align-items: center;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        .search-bar i { color: #666; margin-right: 10px; }
+        .search-bar input {
+            border: none; background: transparent; width: 100%; outline: none;
+            font-size: 14px; color: #333;
+        }
+
+        .welcome-text { font-size: 26px; font-weight: bold; margin-bottom: 5px; }
+        .sub-welcome { font-size: 14px; opacity: 0.7; margin-bottom: 25px; }
+
+        /* 大按鈕區域 (測試區 & XXX區) */
+        .top-cards {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            width: 90%;
+            max-width: 500px;
+            margin-bottom: 25px;
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        .glass-card:active { transform: scale(0.95); }
+        .card-icon { 
+            width: 45px; height: 45px; 
+            background: rgba(0, 242, 254, 0.2); 
+            border-radius: 12px;
+            display: flex; align-items: center; justify-content: center;
+            margin-right: 12px;
+            color: #00f2fe; font-size: 20px;
+        }
+        .card-info h3 { font-size: 16px; margin-bottom: 4px; }
+        .card-info p { font-size: 11px; opacity: 0.6; }
+
+        /* 功能網格 Categories */
+        .section-title { width: 90%; max-width: 500px; text-align: left; font-size: 16px; margin-bottom: 15px; opacity: 0.8; font-style: italic; }
+        
+        .func-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            width: 90%;
+            max-width: 500px;
+            margin-bottom: 100px;
+        }
+
+        .func-item {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 18px;
+            padding: 20px 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        .func-item i { font-size: 24px; color: #00f2fe; margin-bottom: 10px; opacity: 0.9; }
+        .func-item span { font-size: 13px; font-weight: 500; }
+
+        /* 底部導航欄 */
+        .nav-bar {
+            position: fixed;
+            bottom: 25px;
+            width: 90%;
+            max-width: 400px;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 30px;
+            display: flex;
+            justify-content: space-around;
+            padding: 12px 0;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            z-index: 100;
+        }
+
+        .nav-item { color: rgba(255, 255, 255, 0.5); text-align: center; flex: 1; cursor: pointer; }
+        .nav-item.active { color: #007aff; }
+        .nav-item i { font-size: 20px; display: block; margin-bottom: 4px; }
+        .nav-item span { font-size: 10px; }
     </style>
 </head>
 <body>
 
-<div id="wakeUpOverlay">
-    <div class="loader"></div>
-    <div style="font-weight: 300; letter-spacing: 1px;">SYSTEM WAKING UP...</div>
-    <div id="timer" style="font-size: 48px; margin-top: 10px; color: #007aff; font-weight: bold;">50s</div>
-</div>
+    <div class="header">
+        <div class="logo-area">
+            <div class="psa-logo">PSA</div>
+            <div class="sub-logo">華科事業群</div>
+        </div>
+        <div class="tagline">Intelligent technology for better life</div>
+        
+        <div class="search-bar">
+            <i class="fas fa-search"></i>
+            <input type="text" placeholder="Search Keyword (關鍵字搜索)">
+        </div>
 
-<div class="container">
-    <h2>AIoT 控制面板</h2>
-    <button class="ui-element btn btn-orange" onclick="window.location.href='alerts.html'">查看警報列表 (Alerts)</button>
-    <div id="numberDisplay" class="ui-element display-box">...</div>
-    <button class="ui-element btn btn-blue" onclick="getRandomNumber()">請求隨機數字</button>
-    <hr style="margin: 20px 0; opacity: 0.1; border: none; height: 1px; background: white;">
-    <input type="text" id="userDataInput" class="ui-element" style="background: rgba(255,255,255,0.1); color: white;" placeholder="輸入內容...">
-    <button class="ui-element btn btn-dark" onclick="submitUserData()">提交數據數據</button>
-    <hr style="margin: 20px 0; opacity: 0.1; border: none; height: 1px; background: white;">
-    <input type="file" id="fileInput" onchange="uploadFile(this.files[0])">
-    <button class="ui-element btn btn-green" onclick="document.getElementById('fileInput').click()">上傳文件</button>
-</div>
+        <div class="welcome-text">Welcome to AIoT Platform</div>
+        <div class="sub-welcome">The better life always around you</div>
+    </div>
 
-<script>
-    const API_URL = "https://jackalchiu.onrender.com";
+    <div class="top-cards">
+        <div class="glass-card" onclick="window.location.href='test.html?from=splash'">
+            <div class="card-icon"><i class="fas fa-flask"></i></div>
+            <div class="card-info">
+                <h3>測試區</h3>
+                <p>待上架程式</p>
+            </div>
+        </div>
+        <div class="glass-card">
+            <div class="card-icon"><i class="fas fa-th-large"></i></div>
+            <div class="card-info">
+                <h3>XXX區</h3>
+                <p>其他應用</p>
+            </div>
+        </div>
+    </div>
 
-    window.onload = () => {
-        const urlParams = new URLSearchParams(window.location.search);
-        if (urlParams.get('from') !== 'splash') {
-            window.location.href = "./Starting.html";
-            return; 
-        }
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('./sw.js');
-        }
-        checkServerStatus();
-    };
+    <div class="section-title">Categories</div>
 
-    async function checkServerStatus() {
-        const overlay = document.getElementById('wakeUpOverlay');
-        const timerText = document.getElementById('timer');
-        try {
-            const controller = new AbortController();
-            const id = setTimeout(() => controller.abort(), 3500);
-            await fetch(`${API_URL}/`, { signal: controller.signal });
-            clearTimeout(id);
-        } catch (e) {
-            overlay.style.display = 'flex';
-            let timeLeft = 50;
-            const countdown = setInterval(() => {
-                timeLeft--;
-                timerText.innerText = timeLeft + "s";
-                if (timeLeft <= 0) { clearInterval(countdown); location.reload(); }
-            }, 1000);
-        }
-    }
+    <div class="func-grid">
+        <div class="func-item"><i class="fas fa-chart-line"></i><span>func01</span></div>
+        <div class="func-item"><i class="fas fa-microchip"></i><span>func02</span></div>
+        <div class="func-item"><i class="fas fa-database"></i><span>func03</span></div>
+        <div class="func-item"><i class="fas fa-shield-alt"></i><span>func04</span></div>
+        <div class="func-item"><i class="fas fa-cog"></i><span>func05</span></div>
+        <div class="func-item"><i class="fas fa-broadcast-tower"></i><span>func06</span></div>
+    </div>
 
-    async function getRandomNumber() {
-        try {
-            const res = await fetch(`${API_URL}/list`);
-            const data = await res.json();
-            document.getElementById('numberDisplay').innerText = data;
-        } catch (e) { alert("連線失敗"); }
-    }
+    <div class="nav-bar">
+        <div class="nav-item active" onclick="location.href='index.html?from=splash'">
+            <i class="fas fa-home"></i>
+            <span>Home</span>
+        </div>
+        <div class="nav-item">
+            <i class="fas fa-history"></i>
+            <span>Recent</span>
+        </div>
+        <div class="nav-item">
+            <i class="fas fa-user"></i>
+            <span>Profile</span>
+        </div>
+        <div class="nav-item">
+            <i class="fas fa-cog"></i>
+            <span>Settings</span>
+        </div>
+    </div>
 
-    async function submitUserData() {
-        const val = document.getElementById('userDataInput').value;
-        if (!val) return;
-        try {
-            await fetch(`${API_URL}/list`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ note: val })
-            });
-            alert("提交成功");
-        } catch (e) { alert("提交失敗"); }
-    }
-
-    async function uploadFile(file) {
-        if (!file) return;
-        const formData = new FormData();
-        formData.append('file', file);
-        try {
-            await fetch(`${API_URL}/upload`, { method: 'POST', body: formData });
-            alert("上傳成功");
-        } catch (e) { alert("上傳失敗"); }
-    }
-</script>
+    <script>
+        window.onload = () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('from') !== 'splash') {
+                window.location.href = "./Starting.html";
+            }
+        };
+    </script>
 </body>
 </html>
