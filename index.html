@@ -10,7 +10,15 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <link rel="apple-touch-icon" href="./Icon_Jackal.jpg">
     <style>
-        body { margin: 0; padding: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh; background: url('./Bg_JackalAIoT.jpg') no-repeat center center fixed; background-size: cover; background-color: #1a1a1a; font-family: -apple-system, sans-serif; }
+        body { 
+            margin: 0; padding: 0; 
+            display: flex; justify-content: center; align-items: center; 
+            min-height: 100vh; 
+            background: url('./Bg_JackalAIoT.jpg') no-repeat center center fixed; 
+            background-size: cover; 
+            background-color: #1a1a1a; 
+            font-family: -apple-system, sans-serif; 
+        }
         .container { background: rgba(255, 255, 255, 0.15); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); padding: 40px; border-radius: 25px; box-shadow: 0 15px 35px rgba(0,0,0,0.4); width: 90%; max-width: 450px; text-align: center; border: 1px solid rgba(255,255,255,0.2); }
         h2 { color: #ffffff; margin-bottom: 25px; }
         .ui-element { width: 100%; padding: 15px; margin: 12px 0; border-radius: 12px; border: none; font-size: 16px; }
@@ -24,7 +32,6 @@
         #wakeUpOverlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(10px); display: none; flex-direction: column; justify-content: center; align-items: center; z-index: 1000; color: white; text-align: center; }
         .loader { border: 5px solid #f3f3f3; border-top: 5px solid #007aff; border-radius: 50%; width: 50px; height: 50px; animation: spin 2s linear infinite; margin-bottom: 20px; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        .countdown-text { font-size: 20px; font-weight: bold; }
     </style>
 </head>
 <body>
@@ -42,7 +49,7 @@
     <button class="ui-element btn btn-blue" onclick="getRandomNumber()">請求隨機數字 (Button01)</button>
     <hr style="margin: 20px 0; opacity: 0.1;">
     <input type="text" id="userDataInput" class="ui-element" placeholder="輸入內容並提交...">
-    <button class="ui-element btn btn-dark" onclick="submitUserData()">提交數據數據</button>
+    <button class="ui-element btn btn-dark" onclick="submitUserData()">提交數據</button>
     <hr style="margin: 20px 0; opacity: 0.1;">
     <input type="file" id="fileInput" onchange="uploadFile(this.files[0])">
     <button class="ui-element btn btn-green" onclick="document.getElementById('fileInput').click()">上傳文件 (Button02)</button>
@@ -52,11 +59,9 @@
     const API_URL = "https://jackalchiu.onrender.com";
 
     window.onload = () => {
-        // 檢查 URL 參數，確保是從歡迎頁跳轉過來的
+        // 檢查是否由 Starting.html 跳轉而來
         const urlParams = new URLSearchParams(window.location.search);
-        const isFromSplash = urlParams.get('from') === 'splash';
-
-        if (!isFromSplash) {
+        if (urlParams.get('from') !== 'splash') {
             window.location.href = "./Starting.html";
             return; 
         }
@@ -75,7 +80,6 @@
             const id = setTimeout(() => controller.abort(), 3000);
             const res = await fetch(`${API_URL}/`, { signal: controller.signal });
             clearTimeout(id);
-            if (!res.ok) throw new Error();
         } catch (e) {
             overlay.style.display = 'flex';
             let timeLeft = 50;
