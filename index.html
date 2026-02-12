@@ -11,19 +11,15 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        
         body {
-            font-family: -apple-system, "SF Pro Display", "Helvetica Neue", sans-serif;
+            font-family: -apple-system, sans-serif;
             background-color: #1a1a1a;
             color: white;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
             align-items: center;
-            overflow-x: hidden;
         }
-
-        /* 全域背景 */
         body::before {
             content: "";
             position: fixed;
@@ -33,20 +29,15 @@
             z-index: -1;
         }
 
+        /* 頂部佈局容器：保留間距，移除文字 */
         .header {
             width: 90%;
             max-width: 500px;
-            padding-top: 60px;
-            text-align: left;
+            padding-top: 60px; /* 留出頂部空間顯示背景的 PSA Logo */
         }
-
-        .logo-area { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
-        .psa-logo { font-weight: bold; font-size: 24px; color: #E11A22; } /* 模擬 PSA 紅色 */
-        .sub-logo { font-size: 12px; opacity: 0.8; }
-
+        .spacer-top { height: 40px; } /* 原本 Logo 文字的高度佔位 */
         .tagline { font-size: 18px; font-weight: 300; margin: 15px 0; letter-spacing: 1px; }
 
-        /* 搜尋框 */
         .search-bar {
             width: 100%;
             background: rgba(255, 255, 255, 0.9);
@@ -54,19 +45,13 @@
             padding: 12px 15px;
             display: flex;
             align-items: center;
-            margin-bottom: 30px;
+            margin: 20px 0 100px 0; /* 增加下方間距以露出背景歡迎詞 */
             box-shadow: 0 4px 15px rgba(0,0,0,0.1);
         }
         .search-bar i { color: #666; margin-right: 10px; }
-        .search-bar input {
-            border: none; background: transparent; width: 100%; outline: none;
-            font-size: 14px; color: #333;
-        }
+        .search-bar input { border: none; background: transparent; width: 100%; outline: none; font-size: 14px; }
 
-        .welcome-text { font-size: 26px; font-weight: bold; margin-bottom: 5px; }
-        .sub-welcome { font-size: 14px; opacity: 0.7; margin-bottom: 25px; }
-
-        /* 大按鈕區域 (測試區 & XXX區) */
+        /* 按鈕佈局 */
         .top-cards {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -75,7 +60,6 @@
             max-width: 500px;
             margin-bottom: 25px;
         }
-
         .glass-card {
             background: rgba(255, 255, 255, 0.15);
             backdrop-filter: blur(15px);
@@ -86,51 +70,35 @@
             display: flex;
             align-items: center;
             cursor: pointer;
-            transition: transform 0.2s;
         }
-        .glass-card:active { transform: scale(0.95); }
-        .card-icon { 
-            width: 45px; height: 45px; 
-            background: rgba(0, 242, 254, 0.2); 
-            border-radius: 12px;
-            display: flex; align-items: center; justify-content: center;
-            margin-right: 12px;
-            color: #00f2fe; font-size: 20px;
-        }
-        .card-info h3 { font-size: 16px; margin-bottom: 4px; }
-        .card-info p { font-size: 11px; opacity: 0.6; }
-
-        /* 功能網格 Categories */
-        .section-title { width: 90%; max-width: 500px; text-align: left; font-size: 16px; margin-bottom: 15px; opacity: 0.8; font-style: italic; }
+        .card-icon { width: 40px; height: 40px; background: rgba(0, 122, 255, 0.2); border-radius: 10px; display: flex; align-items: center; justify-content: center; margin-right: 10px; color: #007aff; }
         
+        .section-title { width: 90%; max-width: 500px; text-align: left; margin-bottom: 15px; opacity: 0.8; font-style: italic; }
         .func-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             gap: 15px;
             width: 90%;
             max-width: 500px;
-            margin-bottom: 100px;
+            margin-bottom: 120px;
         }
-
         .func-item {
             background: rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(10px);
             -webkit-backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 18px;
             padding: 20px 10px;
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
+            border: 1px solid rgba(255,255,255,0.1);
         }
-        .func-item i { font-size: 24px; color: #00f2fe; margin-bottom: 10px; opacity: 0.9; }
-        .func-item span { font-size: 13px; font-weight: 500; }
+        .func-item i { font-size: 24px; color: #007aff; margin-bottom: 8px; }
 
-        /* 底部導航欄 */
+        /* 導航欄樣式 */
         .nav-bar {
             position: fixed;
-            bottom: 25px;
+            bottom: 30px;
             width: 90%;
             max-width: 400px;
             background: rgba(255, 255, 255, 0.15);
@@ -141,11 +109,9 @@
             display: flex;
             justify-content: space-around;
             padding: 12px 0;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-            z-index: 100;
+            z-index: 1000;
         }
-
-        .nav-item { color: rgba(255, 255, 255, 0.5); text-align: center; flex: 1; cursor: pointer; }
+        .nav-item { color: rgba(255, 255, 255, 0.5); text-align: center; flex: 1; cursor: pointer; text-decoration: none; }
         .nav-item.active { color: #007aff; }
         .nav-item i { font-size: 20px; display: block; margin-bottom: 4px; }
         .nav-item span { font-size: 10px; }
@@ -154,40 +120,25 @@
 <body>
 
     <div class="header">
-        <div class="logo-area">
-            <div class="psa-logo">PSA</div>
-            <div class="sub-logo">華科事業群</div>
-        </div>
-        <div class="tagline">Intelligent technology for better life</div>
-        
+        <div class="spacer-top"></div> <div class="tagline">Intelligent technology for better life</div>
         <div class="search-bar">
             <i class="fas fa-search"></i>
             <input type="text" placeholder="Search Keyword (關鍵字搜索)">
         </div>
-
-        <div class="welcome-text">Welcome to AIoT Platform</div>
-        <div class="sub-welcome">The better life always around you</div>
     </div>
 
     <div class="top-cards">
-        <div class="glass-card" onclick="window.location.href='test.html?from=splash'">
+        <div class="glass-card" onclick="location.href='test.html?from=splash'">
             <div class="card-icon"><i class="fas fa-flask"></i></div>
-            <div class="card-info">
-                <h3>測試區</h3>
-                <p>待上架程式</p>
-            </div>
+            <div class="card-info"><h3>測試區</h3><p>待上架程式</p></div>
         </div>
         <div class="glass-card">
             <div class="card-icon"><i class="fas fa-th-large"></i></div>
-            <div class="card-info">
-                <h3>XXX區</h3>
-                <p>其他應用</p>
-            </div>
+            <div class="card-info"><h3>XXX區</h3><p>其他應用</p></div>
         </div>
     </div>
 
     <div class="section-title">Categories</div>
-
     <div class="func-grid">
         <div class="func-item"><i class="fas fa-chart-line"></i><span>func01</span></div>
         <div class="func-item"><i class="fas fa-microchip"></i><span>func02</span></div>
@@ -197,31 +148,17 @@
         <div class="func-item"><i class="fas fa-broadcast-tower"></i><span>func06</span></div>
     </div>
 
-    <div class="nav-bar">
-        <div class="nav-item active" onclick="location.href='index.html?from=splash'">
-            <i class="fas fa-home"></i>
-            <span>Home</span>
-        </div>
-        <div class="nav-item">
-            <i class="fas fa-history"></i>
-            <span>Recent</span>
-        </div>
-        <div class="nav-item">
-            <i class="fas fa-user"></i>
-            <span>Profile</span>
-        </div>
-        <div class="nav-item">
-            <i class="fas fa-cog"></i>
-            <span>Settings</span>
-        </div>
-    </div>
+    <nav class="nav-bar">
+        <a href="index.html?from=splash" class="nav-item active"><i class="fas fa-home"></i><span>Home</span></a>
+        <a href="alerts.html" class="nav-item"><i class="fas fa-bell"></i><span>Alerts</span></a>
+        <div class="nav-item"><i class="fas fa-user"></i><span>Profile</span></div>
+        <div class="nav-item"><i class="fas fa-cog"></i><span>Settings</span></div>
+    </nav>
 
     <script>
         window.onload = () => {
             const urlParams = new URLSearchParams(window.location.search);
-            if (urlParams.get('from') !== 'splash') {
-                window.location.href = "./Starting.html";
-            }
+            if (urlParams.get('from') !== 'splash') window.location.href = "./Starting.html";
         };
     </script>
 </body>
