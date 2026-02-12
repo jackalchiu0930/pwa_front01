@@ -4,13 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>AIoT 控制面板</title>
+    <link rel="manifest" href="./manifest.json">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        /* 保留原有 CSS 並微調 */
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         body { 
             display: flex; justify-content: center; align-items: center; min-height: 100vh; 
-            background-color: #1a1a1a; font-family: -apple-system, sans-serif; 
+            background-color: #1a1a1a; font-family: -apple-system, sans-serif; color: white;
         }
         body::before {
             content: ""; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -19,46 +19,86 @@
         }
         .container { 
             background: rgba(255, 255, 255, 0.12); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-            padding: 40px; border-radius: 25px; width: 90%; max-width: 450px; text-align: center;
-            border: 1px solid rgba(255,255,255,0.15); margin-bottom: 100px; /* 留出空間給導航欄 */
+            padding: 30px; border-radius: 25px; width: 90%; max-width: 450px; text-align: center;
+            border: 1px solid rgba(255,255,255,0.15); margin-bottom: 120px;
         }
-        .ui-element { width: 100%; padding: 15px; margin: 12px 0; border-radius: 12px; border: none; font-size: 16px; }
-        .btn { cursor: pointer; font-weight: bold; color: white; transition: opacity 0.2s; }
+        .ui-element { width: 100%; padding: 15px; margin: 10px 0; border-radius: 12px; border: none; font-size: 16px; outline: none; }
+        .btn { cursor: pointer; font-weight: bold; color: white; transition: 0.2s; display: block; width: 100%; text-decoration: none; }
         .btn-blue { background: linear-gradient(135deg, #007aff, #0051a8); }
-        .display-box { background: rgba(255, 255, 255, 0.1); border: 1px dashed rgba(0, 122, 255, 0.5); color: #007aff; font-size: 28px; font-weight: bold; min-height: 60px; display: flex; justify-content: center; align-items: center; }
+        .btn-blue:active { transform: scale(0.98); opacity: 0.9; }
         
-        /* 導航欄樣式 */
+        .display-box { background: rgba(255, 255, 255, 0.1); border: 1px dashed rgba(0, 122, 255, 0.5); color: #00f2fe; font-size: 28px; font-weight: bold; min-height: 60px; display: flex; justify-content: center; align-items: center; }
+        
+        /* 文件上傳樣式 */
+        .upload-section { margin-top: 20px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.1); }
+        .file-label { display: block; background: rgba(255,255,255,0.1); padding: 12px; border-radius: 10px; cursor: pointer; border: 1px solid rgba(255,255,255,0.2); font-size: 14px; margin-bottom: 10px; }
+
+        /* 導航欄 */
         .nav-bar { position: fixed; bottom: 30px; width: 90%; max-width: 400px; background: rgba(255, 255, 255, 0.15); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 30px; display: flex; justify-content: space-around; padding: 12px 0; z-index: 1000; }
         .nav-item { color: rgba(255, 255, 255, 0.5); text-align: center; flex: 1; cursor: pointer; text-decoration: none; }
         .nav-item i { font-size: 20px; display: block; margin-bottom: 4px; }
         .nav-item span { font-size: 10px; }
-        #wakeUpOverlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(10px); display: none; flex-direction: column; justify-content: center; align-items: center; z-index: 2000; color: white; }
+
+        #wakeUpOverlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(10px); display: none; flex-direction: column; justify-content: center; align-items: center; z-index: 2000; }
     </style>
 </head>
 <body>
-<div id="wakeUpOverlay"><div class="loader"></div><div>SYSTEM WAKING UP...</div><div id="timer">50s</div></div>
+    <div id="wakeUpOverlay"><div>SYSTEM WAKING UP...</div><div id="timer">50s</div></div>
 
-<div class="container">
-    <h2 style="color:white; margin-bottom:20px;">AIoT 控制面板</h2>
-    <div id="numberDisplay" class="ui-element display-box">...</div>
-    <button class="ui-element btn btn-blue" onclick="getRandomNumber()">請求隨機數字</button>
-    <input type="text" id="userDataInput" class="ui-element" style="background: rgba(255,255,255,0.1); color: white;" placeholder="輸入內容...">
-    <button class="ui-element btn btn-blue" onclick="submitUserData()">提交數據</button>
-</div>
+    <div class="container">
+        <h2 style="margin-bottom:20px;">AIoT 測試區</h2>
+        <div id="numberDisplay" class="ui-element display-box">---</div>
+        <button class="ui-element btn btn-blue" onclick="getRandomNumber()">請求隨機數字</button>
+        
+        <input type="text" id="userDataInput" class="ui-element" style="background: rgba(255,255,255,0.1); color: white;" placeholder="輸入筆記內容...">
+        <button class="ui-element btn btn-blue" onclick="submitUserData()">提交數據</button>
 
-<nav class="nav-bar">
-    <a href="index.html?from=splash" class="nav-item"><i class="fas fa-home"></i><span>Home</span></a>
-    <a href="alerts.html" class="nav-item"><i class="fas fa-bell"></i><span>Alerts</span></a>
-    <div class="nav-item"><i class="fas fa-user"></i><span>Profile</span></div>
-    <div class="nav-item"><i class="fas fa-cog"></i><span>Settings</span></div>
-</nav>
+        <div class="upload-section">
+            <label class="file-label" for="fileInput"><i class="fas fa-cloud-upload-alt"></i> 選擇文件...</label>
+            <input type="file" id="fileInput" style="display:none" onchange="uploadFile(this.files[0])">
+        </div>
+    </div>
 
-<script>
-    const API_URL = "https://jackalchiu.onrender.com";
-    async function getRandomNumber() {
-        try { const res = await fetch(`${API_URL}/list`); const data = await res.json(); document.getElementById('numberDisplay').innerText = data; } catch (e) { alert("連線失敗"); }
-    }
-    // 這裡保留原有的 submitUserData 和 uploadFile 函數...
-</script>
+    <nav class="nav-bar">
+        <a href="index.html?from=splash" class="nav-item"><i class="fas fa-home"></i><span>Home</span></a>
+        <a href="alerts.html" class="nav-item"><i class="fas fa-bell"></i><span>Alerts</span></a>
+        <div class="nav-item"><i class="fas fa-user"></i><span>Profile</span></div>
+        <div class="nav-item"><i class="fas fa-cog"></i><span>Settings</span></div>
+    </nav>
+
+    <script>
+        const API_URL = "https://jackalchiu.onrender.com";
+
+        async function getRandomNumber() {
+            try {
+                const res = await fetch(`${API_URL}/list`);
+                const data = await res.json();
+                document.getElementById('numberDisplay').innerText = data;
+            } catch (e) { alert("連線失敗"); }
+        }
+
+        async function submitUserData() {
+            const val = document.getElementById('userDataInput').value;
+            if (!val) return;
+            try {
+                await fetch(`${API_URL}/list`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ note: val })
+                });
+                alert("提交成功");
+            } catch (e) { alert("提交失敗"); }
+        }
+
+        async function uploadFile(file) {
+            if (!file) return;
+            const formData = new FormData();
+            formData.append('file', file);
+            try {
+                await fetch(`${API_URL}/upload`, { method: 'POST', body: formData });
+                alert("文件上傳成功");
+            } catch (e) { alert("上傳失敗"); }
+        }
+    </script>
 </body>
 </html>
