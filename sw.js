@@ -1,9 +1,8 @@
-const CACHE_NAME = 'aiot-v12';
+const CACHE_NAME = 'aiot-v13';
 const ASSETS = [
   './',
   './Starting.html',
   './index.html',
-  './alerts.html',
   './01_Starting.jpg',
   './Bg_JackalAIoT.jpg',
   './Icon_Jackal.jpg',
@@ -16,13 +15,11 @@ self.addEventListener('install', (e) => {
 });
 
 self.addEventListener('activate', (e) => {
-  e.waitUntil(
-    caches.keys().then((keys) => {
-      return Promise.all(keys.map((key) => {
-        if (key !== CACHE_NAME) return caches.delete(key);
-      }));
-    })
-  );
+  e.waitUntil(caches.keys().then((keys) => {
+    return Promise.all(keys.map((key) => {
+      if (key !== CACHE_NAME) return caches.delete(key);
+    }));
+  }));
 });
 
 self.addEventListener('fetch', (e) => {
