@@ -1,8 +1,9 @@
-const CACHE_NAME = 'aiot-v13';
+const CACHE_NAME = 'aiot-v14';
 const ASSETS = [
   './',
   './Starting.html',
   './index.html',
+  './alerts.html',
   './01_Starting.jpg',
   './Bg_JackalAIoT.jpg',
   './Icon_Jackal.jpg',
