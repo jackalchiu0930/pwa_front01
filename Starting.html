@@ -9,22 +9,24 @@
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
-        /* 使用 fixed 並寬高 100% 來鎖定螢幕，防止系統列造成的黑色區塊 */
+        /* 將底色設為與圖片相近的顏色，避免白色閃爍 */
         html, body { 
             width: 100%; 
             height: 100%; 
             overflow: hidden; 
-            background-color: #ffffff; 
+            background-color: #3c3c5a; 
         }
 
         .starting-screen {
-            position: fixed; /* 關鍵：鎖定定位 */
+            position: fixed; /* 鎖定在螢幕上，無視滾動條或導覽列變化 */
             top: 0;
             left: 0;
-            width: 100%;
-            height: 100%;
+            right: 0;
+            bottom: 0;
+            width: 100vw;
+            height: 100vh;
             background-image: url('01_Starting.jpg'); 
-            background-size: cover; 
+            background-size: cover; /* 確保圖片完全覆蓋容器 */
             background-position: center center;
             background-repeat: no-repeat;
             z-index: 9999;
@@ -34,6 +36,7 @@
 <body>
     <div class="starting-screen"></div>
     <script>
+        // 維持 3 秒跳轉邏輯
         const delayTime = 3000; 
         setTimeout(() => {
             window.location.href = "./index.html?from=splash";
