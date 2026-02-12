@@ -9,13 +9,13 @@
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
+        /* 1. 修正載入瞬間：底色設為黑色，避免紫色閃爍 */
         html, body { 
             width: 100%; height: 100%; 
             overflow: hidden; 
-            background-color: #3b3c59; /* 與圖片底部相近的顏色 */
+            background-color: #000000; 
         }
 
-        /* 核心背景圖 */
         .starting-screen {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -24,36 +24,40 @@
             z-index: 1;
         }
 
-        /* 底部美化 UI 區塊 */
+        /* 2. 底部 UI 區塊：調整為純黑漸層，遮蓋原圖底部紫色 */
         .loading-footer {
             position: fixed;
             bottom: 0; left: 0; width: 100%;
-            padding: 30px 20px (env(safe-area-inset-bottom, 20px)); /* 考慮手機安全區域 */
-            background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
+            /* 考慮手機安全區域，稍微加高 padding */
+            padding: 50px 20px calc(25px + env(safe-area-inset-bottom));
+            /* 漸層：從不透明黑色 (1) 慢慢過渡到透明 (0) */
+            background: linear-gradient(to top, 
+                rgba(0, 0, 0, 1) 0%, 
+                rgba(0, 0, 0, 0.9) 40%, 
+                rgba(0, 0, 0, 0) 100%);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
             z-index: 2;
             display: flex;
             flex-direction: column;
             align-items: center;
             color: white;
-            font-family: -apple-system, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
         }
 
         .loading-text {
-            font-size: 14px;
-            letter-spacing: 2px;
-            margin-bottom: 15px;
-            opacity: 0.8;
-            font-weight: 300;
+            font-size: 12px;
+            letter-spacing: 3px;
+            margin-bottom: 18px;
+            opacity: 0.7;
+            font-weight: 400;
         }
 
-        /* 進度條動畫 */
         .progress-container {
-            width: 60%;
-            height: 3px;
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 3px;
+            width: 55%;
+            height: 2px;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 2px;
             overflow: hidden;
         }
 
@@ -61,8 +65,8 @@
             width: 0%;
             height: 100%;
             background: #007aff;
-            box-shadow: 0 0 10px #007aff;
-            animation: grow 2.8s ease-in-out forwards;
+            box-shadow: 0 0 8px rgba(0, 122, 255, 0.8);
+            animation: grow 2.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
         }
 
         @keyframes grow {
@@ -75,11 +79,11 @@
     <div class="starting-screen"></div>
 
     <div class="loading-footer">
-        <div class="loading-text">SYSTEM INITIALIZING...</div>
+        <div class="loading-text">POWERING AIoT PLATFORM</div>
         <div class="progress-container">
             <div class="progress-bar"></div>
         </div>
-        <div style="height: 20px;"></div>
+        <div style="height: 15px;"></div>
     </div>
 
     <script>
