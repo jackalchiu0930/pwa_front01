@@ -22,7 +22,7 @@
         .btn-back { width: 100%; padding: 15px; background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 12px; color: white; font-weight: bold; cursor: pointer; transition: 0.3s; margin-top: 10px; }
         .btn-back:active { background: rgba(255,255,255,0.2); }
 
-        /* --- 套用 index.html 最新導航欄樣式 --- */
+        /* --- 嚴格同步 index.html 導航欄樣式 --- */
         .nav-bar {
             position: fixed;
             bottom: 20px;
@@ -47,11 +47,11 @@
             flex-direction: column;
             align-items: center;
             gap: 2px;
-            flex: 1;
+            flex: 1; /* 確保四個按鈕平分寬度 */
         }
         .nav-item.active { color: #007aff; }
         .nav-item i { font-size: 18px; }
-        .nav-item span { font-size: 10px; }
+        .nav-item span { font-size: 10px; font-weight: normal; }
     </style>
 </head>
 <body>
@@ -59,13 +59,13 @@
         <h2 style="margin-bottom:20px;">AIoT 警報列表</h2>
         <div id="alertList" class="alert-list"><div style="opacity:0.5;">載入中...</div></div>
         
-        <button onclick="window.location.href='test.html?from=splash'" class="btn-back">
-            <i class="fas fa-arrow-left"></i> 返回測試區
+        <button onclick="window.location.href='index.html'" class="btn-back">
+            <i class="fas fa-arrow-left"></i> 返回首頁
         </button>
     </div>
 
     <nav class="nav-bar">
-        <a href="index.html?from=splash" class="nav-item"><i class="fas fa-home"></i><span>Home</span></a>
+        <a href="index.html" class="nav-item"><i class="fas fa-home"></i><span>Home</span></a>
         <a href="alerts.html" class="nav-item active"><i class="fas fa-bell"></i><span>Alerts</span></a>
         <div class="nav-item"><i class="fas fa-user"></i><span>Profile</span></div>
         <div class="nav-item"><i class="fas fa-cog"></i><span>Settings</span></div>
