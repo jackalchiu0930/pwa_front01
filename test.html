@@ -4,35 +4,56 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>AIoT 控制面板</title>
-    <link rel="manifest" href="./manifest.json">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
+        /* 基礎重置：與 Index 一致 */
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        body { 
-            display: flex; justify-content: center; align-items: center; min-height: 100vh; 
-            background-color: #1a1a1a; font-family: -apple-system, sans-serif; color: white;
+        body {
+            font-family: -apple-system, sans-serif;
+            background-color: #1a1a1a;
+            color: white;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
         }
         body::before {
-            content: ""; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            content: "";
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
             background: url('./Bg_JackalAIoT.jpg') no-repeat center center;
             background-size: cover; z-index: -1;
         }
+
+        /* 容器 UI 樣式：套用 Index 效果 */
         .container { 
-            background: rgba(255, 255, 255, 0.12); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-            padding: 30px; border-radius: 25px; width: 90%; max-width: 450px; text-align: center;
-            border: 1px solid rgba(255,255,255,0.15); margin-bottom: 120px;
+            background: rgba(255, 255, 255, 0.2); 
+            backdrop-filter: blur(15px); 
+            -webkit-backdrop-filter: blur(15px);
+            padding: 30px; 
+            border-radius: 20px; 
+            width: 90%; 
+            max-width: 450px; 
+            border: 1px solid rgba(255, 255, 255, 0.2); 
+            text-align: center; 
+            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+            margin-bottom: 100px;
         }
+
+        /* 測試區 UI 元素樣式 */
         .ui-element { width: 100%; padding: 15px; margin: 10px 0; border-radius: 12px; border: none; font-size: 16px; outline: none; }
         .btn { cursor: pointer; font-weight: bold; color: white; transition: 0.2s; display: block; width: 100%; text-decoration: none; }
-        .btn-blue { background: linear-gradient(135deg, #007aff, #0051a8); }
-        .btn-blue:active { transform: scale(0.98); opacity: 0.9; }
+        /* 使用 Index 的藍色調 */
+        .btn-blue { background: rgba(74, 144, 226, 0.8); border: 1px solid rgba(255,255,255,0.2); }
+        .btn-blue:active { transform: scale(0.98); background: rgba(74, 144, 226, 1); }
         
-        .display-box { background: rgba(255, 255, 255, 0.1); border: 1px dashed rgba(0, 122, 255, 0.5); color: #00f2fe; font-size: 28px; font-weight: bold; min-height: 60px; display: flex; justify-content: center; align-items: center; }
+        .display-box { background: rgba(0, 0, 0, 0.2); border: 1px dashed #4a90e2; color: #4a90e2; font-size: 28px; font-weight: bold; min-height: 60px; display: flex; justify-content: center; align-items: center; }
         
         .upload-section { margin-top: 20px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.1); }
-        .file-label { display: block; background: rgba(255,255,255,0.1); padding: 12px; border-radius: 10px; cursor: pointer; border: 1px solid rgba(255,255,255,0.2); font-size: 14px; margin-bottom: 10px; }
+        .file-label { display: block; background: rgba(255,255,255,0.1); padding: 12px; border-radius: 10px; cursor: pointer; border: 1px solid rgba(255,255,255,0.2); font-size: 14px; margin-bottom: 10px; color: #fff; }
 
-        /* --- 嚴格同步 index.html 導航欄樣式 --- */
+        /* 導航欄：嚴格套用 Index 標準 */
         .nav-bar {
             position: fixed;
             bottom: 20px;
@@ -48,7 +69,7 @@
             align-items: center;
             border: 1px solid rgba(255, 255, 255, 0.3);
             box-shadow: 0 -4px 20px rgba(0,0,0,0.15), 0 10px 20px rgba(0,0,0,0.2);
-            z-index: 1000;
+            z-index: 100;
         }
         .nav-item {
             color: rgba(255, 255, 255, 0.7);
@@ -60,14 +81,13 @@
             flex: 1;
         }
         .nav-item i { font-size: 18px; }
-        .nav-item span { font-size: 10px; font-weight: normal; }
+        .nav-item span { font-size: 10px; }
         .nav-item.active { color: #007aff; }
-
     </style>
 </head>
 <body>
     <div class="container">
-        <h2 style="margin-bottom:20px;">AIoT 測試區</h2>
+        <h2 style="margin-bottom:20px; color: #4a90e2;">AIoT 測試區</h2>
         <div id="numberDisplay" class="ui-element display-box">---</div>
         <button class="ui-element btn btn-blue" onclick="getRandomNumber()">請求隨機數字</button>
         
@@ -89,7 +109,6 @@
 
     <script>
         const API_URL = "https://jackalchiu.onrender.com";
-
         async function getRandomNumber() {
             try {
                 const res = await fetch(`${API_URL}/list`);
@@ -97,7 +116,6 @@
                 document.getElementById('numberDisplay').innerText = data;
             } catch (e) { alert("連線失敗"); }
         }
-
         async function submitUserData() {
             const val = document.getElementById('userDataInput').value;
             if (!val) return;
@@ -110,7 +128,6 @@
                 alert("提交成功");
             } catch (e) { alert("提交失敗"); }
         }
-
         async function uploadFile(file) {
             if (!file) return;
             const formData = new FormData();
