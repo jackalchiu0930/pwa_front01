@@ -30,11 +30,39 @@
             background-size: cover; z-index: -1;
         }
 
-        /* Header 樣式：保留高度以維持佈局 */
-        .header {
+        /* 頂部 Logo 區塊 */
+        .top-logo-bar {
             width: 100%;
-            padding: 60px 25px 20px; /* 增加上邊距以補足刪除文字後的空間 */
+            padding: 50px 20px 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+        .logo-psa { height: 30px; }
+        .logo-group { height: 30px; }
+
+        /* 歡迎標題區塊 - 用來推擠佈局下移 */
+        .welcome-section {
+            width: 100%;
             text-align: center;
+            padding: 120px 20px 30px; /* 增加高度，避免遮擋背景圖案 */
+        }
+        .welcome-title {
+            font-size: 28px;
+            font-weight: 900;
+            color: #000;
+            margin-bottom: 5px;
+            letter-spacing: 1px;
+            text-shadow: 0 1px 2px rgba(255,255,255,0.3);
+        }
+        .welcome-subtitle {
+            font-size: 16px;
+            font-weight: 600;
+            color: #000;
+            border-top: 1px solid #000;
+            display: inline-block;
+            padding-top: 5px;
+            margin-top: 5px;
         }
 
         /* 搜尋框 (Search Bar) */
@@ -45,12 +73,13 @@
         }
         .search-bar {
             width: 100%;
-            background: rgba(255, 255, 255, 0.9);
+            background: rgba(255, 255, 255, 0.95);
             border: none;
-            padding: 12px 15px 12px 45px;
+            padding: 14px 15px 14px 45px;
             border-radius: 12px;
             font-size: 16px;
             color: #333;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
         }
         .search-icon {
             position: absolute;
@@ -70,7 +99,7 @@
         }
         .card {
             flex: 1;
-            background: rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.25);
             backdrop-filter: blur(15px);
             -webkit-backdrop-filter: blur(15px);
             border-radius: 20px;
@@ -78,21 +107,21 @@
             display: flex;
             align-items: center;
             gap: 12px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
         }
         .card i {
             font-size: 24px;
             color: #4a90e2;
         }
-        .card-info h3 { font-size: 16px; font-weight: 600; margin-bottom: 2px; }
-        .card-info p { font-size: 11px; opacity: 0.6; }
+        .card-info h3 { font-size: 16px; font-weight: 600; color: #4a90e2; margin-bottom: 2px; }
+        .card-info p { font-size: 11px; opacity: 0.7; color: #555; }
 
         /* 功能區標題 */
         .section-label {
             width: 90%;
             font-size: 18px;
             font-style: italic;
-            opacity: 0.8;
+            color: rgba(255,255,255,0.8);
             margin-bottom: 15px;
             font-weight: 400;
         }
@@ -103,10 +132,10 @@
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             gap: 15px;
-            margin-bottom: 100px;
+            margin-bottom: 120px;
         }
         .func-item {
-            background: rgba(255, 255, 255, 0.15);
+            background: rgba(255, 255, 255, 0.2);
             backdrop-filter: blur(10px);
             -webkit-backdrop-filter: blur(10px);
             padding: 25px 10px;
@@ -117,28 +146,29 @@
             gap: 12px;
             border: 1px solid rgba(255, 255, 255, 0.1);
         }
-        .func-item i { font-size: 24px; color: #4a90e2; }
-        .func-item span { font-size: 13px; opacity: 0.9; font-weight: 500; }
+        .func-item i { font-size: 26px; color: #4a90e2; }
+        .func-item span { font-size: 13px; color: #555; font-weight: 600; }
 
         /* 底部導航欄 (Nav Bar) */
         .nav-bar {
             position: fixed;
-            bottom: 20px;
+            bottom: 25px;
             width: 90%;
             max-width: 400px;
-            background: rgba(255, 255, 255, 0.2);
-            backdrop-filter: blur(25px);
-            -webkit-backdrop-filter: blur(25px);
-            height: 70px;
-            border-radius: 35px;
+            background: rgba(255, 255, 255, 0.3);
+            backdrop-filter: blur(30px);
+            -webkit-backdrop-filter: blur(30px);
+            height: 75px;
+            border-radius: 40px;
             display: flex;
             justify-content: space-around;
             align-items: center;
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
             z-index: 100;
         }
         .nav-item {
-            color: rgba(255, 255, 255, 0.6);
+            color: rgba(255, 255, 255, 0.7);
             text-decoration: none;
             display: flex;
             flex-direction: column;
@@ -146,14 +176,21 @@
             gap: 4px;
         }
         .nav-item.active { color: #007aff; }
-        .nav-item i { font-size: 20px; }
-        .nav-item span { font-size: 11px; }
+        .nav-item i { font-size: 22px; }
+        .nav-item span { font-size: 11px; font-weight: 600; }
     </style>
 </head>
 <body>
 
-    <div class="header">
-        </div>
+    <div class="top-logo-bar">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/03/PSA_Peugeot_Citro%C3%ABn_logo.svg/1024px-PSA_Peugeot_Citro%C3%ABn_logo.svg.png" class="logo-psa" alt="PSA">
+        <div style="font-weight: bold; color: #000; font-size: 14px;">華科事業群<br><span style="font-size: 8px;">PASSIVE SYSTEM ALLIANCE</span></div>
+    </div>
+
+    <div class="welcome-section">
+        <h1 class="welcome-title">Welcome to AIoT Platform</h1>
+        <p class="welcome-subtitle">The better life always around you</p>
+    </div>
 
     <div class="search-container">
         <i class="fas fa-search search-icon"></i>
