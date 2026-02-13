@@ -69,53 +69,56 @@
         <div class="nav-item"><i class="fas fa-cog"></i><span>Settings</span></div>
     </nav>
 
-    <script>
-        // --- 核心同步：金鑰必須與後端 Private Key 絕對匹配 ---
-        const VAPID_PUB_KEY = "BCX7B_3Rz7X8xG5XFj7f_wG9Vp6bJ3qY3S7D5jX9nL4vM1S9V3j_N0YV1jX9V";
+<script>
+    const VAPID_PUB_KEY = "BI8v9P1eO8S_Z3uS7G6X5V4C3B2N1M0L_K9J8H7G6F5D4S3A2P1O0I9U8Y7T6R5E4W";
 
-        function urlBase64ToUint8Array(base64String) {
-            const padding = '='.repeat((4 - base64String.length % 4) % 4);
-            const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
-            const rawData = window.atob(base64);
-            const outputArray = new Uint8Array(rawData.length);
-            for (let i = 0; i < rawData.length; ++i) outputArray[i] = rawData.charCodeAt(i);
-            return outputArray;
-        }
+    function urlBase64ToUint8Array(base64String) {
+        const padding = '='.repeat((4 - base64String.length % 4) % 4);
+        const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
+        const rawData = window.atob(base64);
+        const outputArray = new Uint8Array(rawData.length);
+        for (let i = 0; i < rawData.length; ++i) outputArray[i] = rawData.charCodeAt(i);
+        return outputArray;
+    }
 
-        async function initPushSubscription() {
-            if ('serviceWorker' in navigator && 'PushManager' in window) {
-                try {
-                    const reg = await navigator.serviceWorker.ready;
-                    let sub = await reg.pushManager.getSubscription();
+    async function initPushSubscription() {
+        if ('serviceWorker' in navigator && 'PushManager' in window) {
+            try {
+                const reg = await navigator.serviceWorker.ready;
+                let sub = await reg.pushManager.getSubscription();
+                
+                // 若權限已開但未訂閱，執行註冊
+                if (!sub && Notification.permission === 'granted') {
+                    sub = await reg.pushManager.subscribe({
+                        userVisibleOnly: true,
+                        applicationServerKey: urlBase64ToUint8Array(VAPID_PUB_KEY)
+                    });
                     
-                    if (!sub && Notification.permission === 'granted') {
-                        sub = await reg.pushManager.subscribe({
-                            userVisibleOnly: true,
-                            applicationServerKey: urlBase64ToUint8Array(VAPID_PUB_KEY)
-                        });
-                        
-                        await fetch('https://jackalchiu.onrender.com/subscribe', {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify(sub)
-                        });
-                        console.log("Push Subscribed Success");
-                    }
-                } catch (err) { console.error("Subscription Error:", err); }
-            }
+                    await fetch('https://jackalchiu.onrender.com/subscribe', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(sub)
+                    });
+                    console.log("訂閱資料已更新至後端");
+                }
+            } catch (err) { console.error("訂閱邏輯錯誤:", err); }
         }
+    }
 
-        // 重要：由點擊觸發權限與訂閱
-        document.body.addEventListener('click', async () => {
-            if (Notification.permission === 'default') {
-                const permission = await Notification.requestPermission();
-                if (permission === 'granted') initPushSubscription();
-            } else if (Notification.permission === 'granted') {
-                initPushSubscription();
-            }
-        }, { once: false }); // 允許重複點擊以確保訂閱成功
+    // 關鍵：處理用戶交互
+    document.body.addEventListener('click', async () => {
+        if (Notification.permission === 'default') {
+            const permission = await Notification.requestPermission();
+            if (permission === 'granted') initPushSubscription();
+        } else if (Notification.permission === 'granted') {
+            initPushSubscription();
+        }
+    });
 
-        window.onload = () => { initPushSubscription(); };
-    </script>
+    window.onload = () => {
+        initPushSubscription();
+    };
+</script>
 </body>
 </html>
+
