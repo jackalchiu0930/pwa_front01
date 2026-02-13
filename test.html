@@ -6,7 +6,7 @@
     <title>AIoT 控制面板</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        /* 基礎重置：與 Index 一致 */
+        /* 基礎重置 - 嚴格對齊 Index */
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         body {
             font-family: -apple-system, sans-serif;
@@ -16,7 +16,6 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
         }
         body::before {
             content: "";
@@ -26,34 +25,41 @@
             background-size: cover; z-index: -1;
         }
 
-        /* 容器 UI 樣式：套用 Index 效果 */
+        /* 關鍵占位區：確保內容下移 */
+        .top-padding-spacer {
+            width: 100%;
+            height: 410px; 
+        }
+
+        /* 容器樣式 - 對齊 Index 卡片效果 */
         .container { 
             background: rgba(255, 255, 255, 0.2); 
             backdrop-filter: blur(15px); 
             -webkit-backdrop-filter: blur(15px);
-            padding: 30px; 
+            padding: 25px 20px; 
             border-radius: 20px; 
             width: 90%; 
-            max-width: 450px; 
             border: 1px solid rgba(255, 255, 255, 0.2); 
             text-align: center; 
             box-shadow: 0 8px 16px rgba(0,0,0,0.2);
             margin-bottom: 100px;
         }
 
-        /* 測試區 UI 元素樣式 */
-        .ui-element { width: 100%; padding: 15px; margin: 10px 0; border-radius: 12px; border: none; font-size: 16px; outline: none; }
-        .btn { cursor: pointer; font-weight: bold; color: white; transition: 0.2s; display: block; width: 100%; text-decoration: none; }
-        /* 使用 Index 的藍色調 */
+        h2 { font-size: 20px; margin-bottom: 20px; color: #4a90e2; }
+
+        /* UI 元素樣式 */
+        .ui-element { width: 100%; padding: 14px; margin: 10px 0; border-radius: 12px; border: none; font-size: 16px; outline: none; }
+        
+        .btn { cursor: pointer; font-weight: 600; color: white; transition: 0.2s; display: block; text-decoration: none; }
         .btn-blue { background: rgba(74, 144, 226, 0.8); border: 1px solid rgba(255,255,255,0.2); }
         .btn-blue:active { transform: scale(0.98); background: rgba(74, 144, 226, 1); }
         
-        .display-box { background: rgba(0, 0, 0, 0.2); border: 1px dashed #4a90e2; color: #4a90e2; font-size: 28px; font-weight: bold; min-height: 60px; display: flex; justify-content: center; align-items: center; }
+        .display-box { background: rgba(0, 0, 0, 0.2); border: 1px dashed #4a90e2; color: #4a90e2; font-size: 28px; font-weight: bold; min-height: 65px; display: flex; justify-content: center; align-items: center; }
         
-        .upload-section { margin-top: 20px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.1); }
-        .file-label { display: block; background: rgba(255,255,255,0.1); padding: 12px; border-radius: 10px; cursor: pointer; border: 1px solid rgba(255,255,255,0.2); font-size: 14px; margin-bottom: 10px; color: #fff; }
+        .upload-section { margin-top: 15px; padding-top: 15px; border-top: 1px solid rgba(255,255,255,0.1); }
+        .file-label { display: block; background: rgba(255,255,255,0.1); padding: 12px; border-radius: 10px; cursor: pointer; border: 1px solid rgba(255,255,255,0.2); font-size: 14px; color: #fff; }
 
-        /* 導航欄：嚴格套用 Index 標準 */
+        /* 底部導航欄 - 嚴格對齊 Index */
         .nav-bar {
             position: fixed;
             bottom: 20px;
@@ -78,16 +84,17 @@
             flex-direction: column;
             align-items: center;
             gap: 2px;
-            flex: 1;
         }
+        .nav-item.active { color: #007aff; }
         .nav-item i { font-size: 18px; }
         .nav-item span { font-size: 10px; }
-        .nav-item.active { color: #007aff; }
     </style>
 </head>
 <body>
+    <div class="top-padding-spacer"></div>
+
     <div class="container">
-        <h2 style="margin-bottom:20px; color: #4a90e2;">AIoT 測試區</h2>
+        <h2>AIoT 測試區</h2>
         <div id="numberDisplay" class="ui-element display-box">---</div>
         <button class="ui-element btn btn-blue" onclick="getRandomNumber()">請求隨機數字</button>
         
