@@ -36,7 +36,14 @@
             height: 410px; 
         }
 
-        /* 搜尋框 (Search Bar) */
+        /* 定義按下時的動畫：強制縮放與閃亮 */
+        @keyframes button-tap {
+            0% { transform: scale(1); filter: brightness(1); }
+            40% { transform: scale(0.9); filter: brightness(1.8); background: rgba(255,255,255,0.4); }
+            100% { transform: scale(1); filter: brightness(1); }
+        }
+
+        /* 搜尋框 */
         .search-container {
             width: 90%;
             margin-bottom: 30px;
@@ -61,7 +68,7 @@
             font-size: 18px;
         }
 
-        /* 頂部大卡片 - 強化按下效果 */
+        /* 頂部卡片 */
         .card-container {
             width: 90%;
             display: flex;
@@ -80,22 +87,18 @@
             gap: 12px;
             border: 1px solid rgba(255, 255, 255, 0.2);
             box-shadow: 0 8px 16px rgba(0,0,0,0.2);
-            transition: all 0.1s ease;
             cursor: pointer;
             user-select: none;
         }
-        /* 修改點：按下時產生內陰影與明顯縮放 */
+        /* 輕點觸發動畫 */
         .card:active {
-            transform: scale(0.92);
-            background: rgba(255, 255, 255, 0.1);
-            box-shadow: inset 4px 4px 10px rgba(0,0,0,0.5);
+            animation: button-tap 0.15s ease-out;
         }
 
         .card i { font-size: 22px; color: #4a90e2; }
         .card-info h3 { font-size: 16px; font-weight: 600; color: #4a90e2; margin-bottom: 2px; }
         .card-info p { font-size: 11px; opacity: 0.6; color: #333; }
 
-        /* Categories 標籤 */
         .section-label {
             width: 90%;
             font-size: 18px;
@@ -105,7 +108,7 @@
             font-weight: 400;
         }
 
-        /* 中間 6 個按鈕網格 - 強化觸發感 */
+        /* 中間 6 個按鈕網格 */
         .func-grid {
             width: 90%;
             display: grid;
@@ -125,21 +128,19 @@
             gap: 12px;
             border: 1px solid rgba(255, 255, 255, 0.1);
             box-shadow: 0 6px 12px rgba(0,0,0,0.2);
-            transition: all 0.05s linear;
             cursor: pointer;
             user-select: none;
         }
-        /* 修改點：按下時背景變亮，產生「點亮」的感覺 */
+        /* 輕點觸發動畫 - 比卡片更明顯的縮放 */
         .func-item:active {
-            transform: scale(0.88);
-            background: rgba(255, 255, 255, 0.5);
-            border: 1px solid rgba(255, 255, 255, 0.8);
+            animation: button-tap 0.15s ease-out;
+            background: rgba(255, 255, 255, 0.6);
         }
 
         .func-item i { font-size: 26px; color: #4a90e2; }
         .func-item span { font-size: 13px; color: #555; font-weight: 500; }
 
-        /* 底部導航欄 - 強化視覺反饋 */
+        /* 底部導航欄 */
         .nav-bar {
             position: fixed;
             bottom: 20px;
@@ -164,15 +165,19 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            width: 60px;
+            flex: 1;
             height: 100%;
-            border-radius: 20px;
-            transition: all 0.1s ease;
+            border-radius: 30px;
+            user-select: none;
         }
-        /* 修改點：底部按鈕按下時出現圓形背景底色 */
+        /* 導航欄輕點動畫：波紋閃爍感 */
         .nav-item:active {
             background: rgba(255, 255, 255, 0.2);
-            transform: translateY(-5px) scale(1.1);
+            transition: background 0.1s;
+        }
+        .nav-item:active i {
+            transform: scale(1.3);
+            transition: transform 0.1s;
         }
 
         .nav-item.active { color: #007aff; }
@@ -225,6 +230,7 @@
     </nav>
 
 <script>
+    /* PWA 及 Push 通知邏輯保持不變 */
     const VAPID_PUB_KEY = "BI8v9P1eO8S_Z3uS7G6X5V4C3B2N1M0L_K9J8H7G6F5D4S3A2P1O0I9U8Y7T6R5E4W";
     function urlBase64ToUint8Array(base64String) {
         const padding = '='.repeat((4 - base64String.length % 4) % 4);
