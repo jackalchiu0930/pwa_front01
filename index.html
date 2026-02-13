@@ -30,17 +30,11 @@
             background-size: cover; z-index: -1;
         }
 
-        /* Header 樣式 */
+        /* Header 樣式：保留高度以維持佈局 */
         .header {
             width: 100%;
-            padding: 50px 25px 10px;
+            padding: 60px 25px 20px; /* 增加上邊距以補足刪除文字後的空間 */
             text-align: center;
-        }
-        .header h1 {
-            font-size: 22px;
-            font-weight: 300;
-            letter-spacing: 1px;
-            margin-bottom: 20px;
         }
 
         /* 搜尋框 (Search Bar) */
@@ -159,8 +153,7 @@
 <body>
 
     <div class="header">
-        <h1>Intelligent technology for better life</h1>
-    </div>
+        </div>
 
     <div class="search-container">
         <i class="fas fa-search search-icon"></i>
@@ -203,7 +196,7 @@
     </nav>
 
 <script>
-    // 保留原本的 Web Push 邏輯
+    // Web Push 核心邏輯
     const VAPID_PUB_KEY = "BI8v9P1eO8S_Z3uS7G6X5V4C3B2N1M0L_K9J8H7G6F5D4S3A2P1O0I9U8Y7T6R5E4W";
 
     function urlBase64ToUint8Array(base64String) {
