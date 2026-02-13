@@ -1,51 +1,33 @@
-const CACHE_NAME = 'aiot-push-v2026-final-check'; // 強制刷新
+const CACHE_NAME = 'jackal-v999'; // 強制刷新
 const ASSETS = [
   './', './Starting.html', './index.html', './test.html', './alerts.html',
   './01_Starting.jpg', './Bg_JackalAIoT.jpg', './Icon_Jackal.jpg', './manifest.json'
 ];
 
-self.addEventListener('install', (e) => {
-  self.skipWaiting();
-  e.waitUntil(caches.open(CACHE_NAME).then((cache) => cache.addAll(ASSETS)));
-});
-
+self.addEventListener('install', (e) => self.skipWaiting());
 self.addEventListener('activate', (e) => {
-  e.waitUntil(caches.keys().then((keys) => {
-    return Promise.all(keys.map((key) => {
-      if (key !== CACHE_NAME) return caches.delete(key);
-    })));
-  }));
+  e.waitUntil(caches.keys().then(keys => Promise.all(keys.map(k => caches.delete(k)))));
 });
 
-self.addEventListener('fetch', (e) => {
-  e.respondWith(caches.match(e.request).then((res) => res || fetch(e.request)));
-});
-
-// --- 監聽並顯示推播 ---
 self.addEventListener('push', (event) => {
-  let pushData = { title: 'Jackal AIoT', body: '收到新訊息' };
-  
-  if (event.data) {
-    try {
-      pushData = event.data.json(); // 解析後端發來的 JSON
-    } catch (e) {
-      pushData.body = event.data.text();
-    }
+  let data = { title: 'Jackal AIoT', body: '設備通知' };
+  try {
+    data = event.data.json();
+  } catch (e) {
+    data.body = event.data ? event.data.text() : '收到新數據';
   }
-
   const options = {
-    body: pushData.body,
+    body: data.body,
     icon: './Icon_Jackal.jpg',
     badge: './Icon_Jackal.jpg',
     vibrate: [200, 100, 200],
-    data: { url: './alerts.html' },
-    tag: 'aiot-status'
+    data: { url: './alerts.html' }
   };
-
-  event.waitUntil(self.registration.showNotification(pushData.title, options));
+  event.waitUntil(self.registration.showNotification(data.title, options));
 });
 
 self.addEventListener('notificationclick', (event) => {
   event.notification.close();
   event.waitUntil(clients.openWindow(event.notification.data.url));
 });
+
