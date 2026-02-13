@@ -1,4 +1,4 @@
-const CACHE_NAME = 'aiot-v2026-v2'; // 更新版本號以強制刷新
+const CACHE_NAME = 'aiot-push-v2026-final-check'; // 強制刷新
 const ASSETS = [
   './', './Starting.html', './index.html', './test.html', './alerts.html',
   './01_Starting.jpg', './Bg_JackalAIoT.jpg', './Icon_Jackal.jpg', './manifest.json'
@@ -21,28 +21,28 @@ self.addEventListener('fetch', (e) => {
   e.respondWith(caches.match(e.request).then((res) => res || fetch(e.request)));
 });
 
-// --- 監聽推播 ---
+// --- 監聽並顯示推播 ---
 self.addEventListener('push', (event) => {
-  let data = { title: 'Jackal AIoT', body: '收到新數據' };
+  let pushData = { title: 'Jackal AIoT', body: '收到新訊息' };
   
   if (event.data) {
     try {
-      data = event.data.json(); // 嘗試解析 JSON
+      pushData = event.data.json(); // 解析後端發來的 JSON
     } catch (e) {
-      data.body = event.data.text(); // 解析失敗則當作純文字
+      pushData.body = event.data.text();
     }
   }
 
   const options = {
-    body: data.body,
+    body: pushData.body,
     icon: './Icon_Jackal.jpg',
     badge: './Icon_Jackal.jpg',
     vibrate: [200, 100, 200],
     data: { url: './alerts.html' },
-    tag: 'aiot-notification'
+    tag: 'aiot-status'
   };
 
-  event.waitUntil(self.registration.showNotification(data.title, options));
+  event.waitUntil(self.registration.showNotification(pushData.title, options));
 });
 
 self.addEventListener('notificationclick', (event) => {
