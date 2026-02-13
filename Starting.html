@@ -26,7 +26,7 @@
         .loading-footer {
             position: fixed;
             bottom: 0; left: 0; width: 100%;
-            padding: 20px 20px calc(15px + env(safe-area-inset-bottom));
+            padding: 20px 20px calc(25px + env(safe-area-inset-bottom));
             background: linear-gradient(to top, 
                 rgba(0, 0, 0, 0.5) 0%, 
                 rgba(0, 0, 0, 0.2) 60%, 
@@ -67,19 +67,21 @@
             animation: grow 2.8s ease-in-out forwards;
         }
 
-        /* --- 新增：絕對定位的版本資訊區域 --- */
+        /* --- 核心調整：版本資訊區域 --- */
         .version-overlay {
             position: fixed;
-            bottom: calc(0px + env(safe-area-inset-bottom)); /* 貼近最底部 */
-            right: 15px; /* 靠右對齊 */
-            z-index: 3; /* 高於 footer */
+            /* 調整為 0px 並配合環境安全區域，確保文字在最底部淡藍色區塊 */
+            bottom: calc(0px + env(safe-area-inset-bottom)); 
+            right: 15px; 
+            z-index: 3; 
             text-align: right;
-            font-style: italic; /* 斜體 */
-            color: rgba(0, 0, 0, 0.35); /* 配合背景調整為深灰色，如圖中所示 */
-            font-size: 14px; /* 配合淡藍色區域大小 */
-            line-height: 0.9; /* 行距 */
-            pointer-events: none; /* 不干擾點擊 */
+            font-style: italic; 
+            color: rgba(0, 0, 0, 0.35); 
+            font-size: 10px; /* 稍微縮小字體以適應窄小的底部區域 */
+            line-height: 1.1; /* 縮小行高，讓兩行文字更緊湊 */
+            pointer-events: none; 
             font-family: Arial, sans-serif;
+            padding-bottom: 2px; /* 增加極小邊距避免貼齊螢幕物理邊緣 */
         }
 
         @keyframes grow {
@@ -105,11 +107,11 @@
     </div>
 
     <script>
-        // 從 sw.js 提取版本號
         async function loadVersions() {
             try {
                 const response = await fetch('./sw.js');
                 const code = await response.text();
+                // 抓取 FE_VERSION 與 BE_VERSION
                 const fe = code.match(/FE_VERSION\s*=\s*['"]([^'"]+)['"]/);
                 const be = code.match(/BE_VERSION\s*=\s*['"]([^'"]+)['"]/);
                 if (fe && be) {
@@ -127,7 +129,3 @@
     </script>
 </body>
 </html>
-
-
-
-
