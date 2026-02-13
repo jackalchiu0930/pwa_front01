@@ -9,7 +9,7 @@
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
-        /* 底色對齊原圖底部 */
+        /* 修正閃爍：底色改為接近原圖底部的深紫色 */
         html, body { 
             width: 100%; height: 100%; 
             overflow: hidden; 
@@ -24,16 +24,17 @@
             z-index: 1;
         }
 
-        /* 底部容器 */
+        /* 底部美化：降低黑度，保留原圖底部的紫色與線條 */
         .loading-footer {
             position: fixed;
             bottom: 0; left: 0; width: 100%;
-            /* 調整 padding 以確保版權文字位置正確 */
-            padding: 20px 20px calc(10px + env(safe-area-inset-bottom));
+            padding: 20px 20px calc(15px + env(safe-area-inset-bottom));
+            /* 極輕微的漸層，只為了讓文字清晰，不遮擋原圖 */
             background: linear-gradient(to top, 
                 rgba(0, 0, 0, 0.5) 0%, 
                 rgba(0, 0, 0, 0.2) 60%, 
                 rgba(0, 0, 0, 0) 100%);
+            /* 輕微模糊增加層次感 */
             backdrop-filter: blur(4px);
             -webkit-backdrop-filter: blur(4px);
             z-index: 2;
@@ -49,9 +50,10 @@
             letter-spacing: 4px;
             margin-bottom: 12px;
             opacity: 0.9;
-            font-weight: 400;
-            color: #007aff;
-            text-shadow: 0 0 10px rgba(0, 122, 255, 0.5);
+            font-weight: 400; /* 稍微加粗一點點 */
+            /* --- 在這裡調整顏色 --- */
+            color: #007aff;  /* 科技亮藍（與進度條一致），你可以改為任何 Hex 色碼 */
+            text-shadow: 0 0 10px rgba(0, 122, 255, 0.5); /* 增加發光感 */
         }
 
         .progress-container {
@@ -60,7 +62,6 @@
             background: rgba(255, 255, 255, 0.2);
             border-radius: 2px;
             overflow: hidden;
-            margin-bottom: 25px; /* 留出空間給下方的版權文字 */
         }
 
         .progress-bar {
@@ -69,18 +70,6 @@
             background: #007aff;
             box-shadow: 0 0 10px rgba(0, 122, 255, 0.8);
             animation: grow 2.8s ease-in-out forwards;
-        }
-
-        /* --- 版權與版本資訊樣式 (紅框區域) --- */
-        .copyright-section {
-            width: 100%;
-            text-align: right; /* 右對齊 */
-            padding-right: 15px;
-            font-style: italic; /* 斜體 */
-            color: rgba(255, 255, 255, 0.45); /* 灰色文字 */
-            font-size: 9px; /* 文字大小 */
-            line-height: 1.5;
-            font-family: Arial, sans-serif;
         }
 
         @keyframes grow {
@@ -97,43 +86,18 @@
         <div class="progress-container">
             <div class="progress-bar"></div>
         </div>
-        
-        <div class="copyright-section">
-            <div>Copyright © by Passive System Alliance | All rights reserved.</div>
-            <div id="version-display">by Jackal.Chiu | FE: v1.0.0 , BE: v1.0.0</div>
-        </div>
-        
         <div style="height: 5px;"></div>
     </div>
 
     <script>
-        // 從 sw.js 抓取 FE 與 BE 版本號並呈現
-        async function fetchVersions() {
-            try {
-                const response = await fetch('./sw.js');
-                const text = await response.text();
-                
-                // 正則表達式匹配 FE_VERSION 和 BE_VERSION
-                const feMatch = text.match(/FE_VERSION\s*=\s*['"]([^'"]+)['"]/);
-                const beMatch = text.match(/BE_VERSION\s*=\s*['"]([^'"]+)['"]/);
-                
-                const feVer = feMatch ? feMatch[1] : '1.0.0';
-                const beVer = beMatch ? beMatch[1] : '1.0.0';
-                
-                document.getElementById('version-display').innerText = 
-                    `by Jackal.Chiu | FE: v${feVer} , BE: v${beVer}`;
-            } catch (e) {
-                console.warn("無法取得版本資訊，使用預設值");
-            }
-        }
-
-        // 執行抓取版本號
-        fetchVersions();
-
-        // 3秒後跳轉
+        // 在 Starting.html 的 <script> 標籤中修改
         setTimeout(() => {
+            // 確保跳轉到 index.html (現在是我們的新首頁)
             window.location.href = "./index.html?from=splash";
-        }, 3000);
+            }, 3000);
     </script>
 </body>
 </html>
+
+
+
