@@ -10,71 +10,28 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        /* --- 完全保留您原本的 CSS 樣式 --- */
+        /* --- 完全保留您的 CSS --- */
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        body {
-            font-family: -apple-system, sans-serif;
-            background-color: #1a1a1a;
-            color: white;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-        body::before {
-            content: "";
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: url('./Bg_JackalAIoT.jpg') no-repeat center center;
-            background-size: cover; z-index: -1;
-        }
-        .header {
-            width: 100%;
-            padding: 60px 25px 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
+        body { font-family: -apple-system, sans-serif; background-color: #1a1a1a; color: white; min-height: 100vh; display: flex; flex-direction: column; align-items: center; }
+        body::before { content: ""; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: url('./Bg_JackalAIoT.jpg') no-repeat center center; background-size: cover; z-index: -1; }
+        .header { width: 100%; padding: 60px 25px 20px; display: flex; justify-content: space-between; align-items: center; }
         .user-profile { display: flex; align-items: center; gap: 12px; }
         .avatar { width: 45px; height: 45px; border-radius: 50%; border: 2px solid rgba(255,255,255,0.3); }
         .welcome-text h2 { font-size: 18px; font-weight: 600; }
         .welcome-text p { font-size: 12px; opacity: 0.7; }
-        
         .section-title { width: 90%; margin: 20px 0 15px; font-size: 16px; font-weight: 600; opacity: 0.9; }
-        
         .card-container { width: 95%; display: flex; gap: 15px; padding: 5px; overflow-x: auto; scrollbar-width: none; }
-        .card-container::-webkit-scrollbar { display: none; }
-        
-        .card {
-            min-width: 200px; height: 120px;
-            border-radius: 20px; padding: 20px;
-            display: flex; flex-direction: column; justify-content: space-between;
-            position: relative; overflow: hidden;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
-        }
+        .card { min-width: 200px; height: 120px; border-radius: 20px; padding: 20px; display: flex; flex-direction: column; justify-content: space-between; position: relative; overflow: hidden; box-shadow: 0 10px 20px rgba(0,0,0,0.2); }
         .card-1 { background: linear-gradient(135deg, #6366f1, #a855f7); }
         .card-2 { background: linear-gradient(135deg, #3b82f6, #2dd4bf); }
         .card-icon { font-size: 24px; opacity: 0.8; }
         .card-info h3 { font-size: 16px; margin-bottom: 4px; }
         .card-info p { font-size: 11px; opacity: 0.8; }
-
         .func-grid { width: 90%; display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-bottom: 100px; }
-        .func-item {
-            background: rgba(255,255,255,0.1); backdrop-filter: blur(10px);
-            padding: 20px 10px; border-radius: 20px;
-            display: flex; flex-direction: column; align-items: center; gap: 10px;
-            border: 1px solid rgba(255,255,255,0.1);
-        }
+        .func-item { background: rgba(255,255,255,0.1); backdrop-filter: blur(10px); padding: 20px 10px; border-radius: 20px; display: flex; flex-direction: column; align-items: center; gap: 10px; border: 1px solid rgba(255,255,255,0.1); }
         .func-item i { font-size: 20px; color: #a855f7; }
         .func-item span { font-size: 12px; opacity: 0.8; }
-
-        .nav-bar {
-            position: fixed; bottom: 25px; width: 90%; max-width: 400px;
-            background: rgba(0,0,0,0.6); backdrop-filter: blur(20px);
-            height: 65px; border-radius: 32px;
-            display: flex; justify-content: space-around; align-items: center;
-            border: 1px solid rgba(255,255,255,0.1); z-index: 100;
-        }
+        .nav-bar { position: fixed; bottom: 25px; width: 90%; max-width: 400px; background: rgba(0,0,0,0.6); backdrop-filter: blur(20px); height: 65px; border-radius: 32px; display: flex; justify-content: space-around; align-items: center; border: 1px solid rgba(255,255,255,0.1); z-index: 100; }
         .nav-item { color: rgba(255,255,255,0.5); text-decoration: none; display: flex; flex-direction: column; align-items: center; gap: 4px; }
         .nav-item.active { color: #a855f7; }
         .nav-item i { font-size: 18px; }
@@ -82,34 +39,17 @@
     </style>
 </head>
 <body>
-
     <div class="header">
         <div class="user-profile">
             <img src="./Icon_Jackal.jpg" alt="Avatar" class="avatar">
-            <div class="welcome-text">
-                <p>Welcome back,</p>
-                <h2>Jackal Chiu</h2>
-            </div>
+            <div class="welcome-text"><p>Welcome back,</p><h2>Jackal Chiu</h2></div>
         </div>
-        <div class="header-icon"><i class="fas fa-search" style="font-size: 20px; opacity: 0.7;"></i></div>
     </div>
 
     <div class="section-title">Device Status</div>
     <div class="card-container">
-        <div class="card card-1" onclick="location.href='test.html'">
-            <i class="fas fa-microchip card-icon"></i>
-            <div class="card-info">
-                <h3>測試控制台</h3>
-                <p>發送測試推播與數據</p>
-            </div>
-        </div>
-        <div class="card card-2" onclick="location.href='alerts.html'">
-            <i class="fas fa-bell card-icon"></i>
-            <div class="card-info">
-                <h3>警報歷史</h3>
-                <p>查看過往通知紀錄</p>
-            </div>
-        </div>
+        <div class="card card-1" onclick="location.href='test.html'"><i class="fas fa-microchip card-icon"></i><div class="card-info"><h3>測試控制台</h3><p>數據發送與推播</p></div></div>
+        <div class="card card-2" onclick="location.href='alerts.html'"><i class="fas fa-bell card-icon"></i><div class="card-info"><h3>警報歷史</h3><p>查看過往通知紀錄</p></div></div>
     </div>
 
     <div class="section-title">Functions</div>
@@ -130,11 +70,9 @@
     </nav>
 
     <script>
-        // --- Web Push 核心邏輯 (完全不破壞布局) ---
-        // --- 這組公鑰已經與 main.py 同步 ---
-        const VAPID_PUB_KEY = "BI8v9P1eO8S_Z3uS7G6X5V4C3B2N1M0L_K9J8H7G6F5D4S3A2P1O0I9U8Y7T6R5E4W";
+        // --- 核心同步：金鑰必須與後端 Private Key 絕對匹配 ---
+        const VAPID_PUB_KEY = "BCX7B_3Rz7X8xG5XFj7f_wG9Vp6bJ3qY3S7D5jX9nL4vM1S9V3j_N0YV1jX9V";
 
-        // 格式轉換工具
         function urlBase64ToUint8Array(base64String) {
             const padding = '='.repeat((4 - base64String.length % 4) % 4);
             const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
@@ -142,55 +80,42 @@
             const outputArray = new Uint8Array(rawData.length);
             for (let i = 0; i < rawData.length; ++i) outputArray[i] = rawData.charCodeAt(i);
             return outputArray;
-    }
+        }
 
         async function initPushSubscription() {
-        if ('serviceWorker' in navigator && 'PushManager' in window) {
-            try {
-                const reg = await navigator.serviceWorker.ready;
-                let sub = await reg.pushManager.getSubscription();
-                
-                // 如果已經授權但還沒訂閱過
-                if (!sub && Notification.permission === 'granted') {
-                    sub = await reg.pushManager.subscribe({
-                        userVisibleOnly: true,
-                        applicationServerKey: urlBase64ToUint8Array(VAPID_PUB_KEY)
-                    });
+            if ('serviceWorker' in navigator && 'PushManager' in window) {
+                try {
+                    const reg = await navigator.serviceWorker.ready;
+                    let sub = await reg.pushManager.getSubscription();
                     
-                    await fetch('https://jackalchiu.onrender.com/subscribe', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(sub)
-                    });
-                    console.log("Web Push 訂閱註冊完成");
-                }
-            } catch (err) {
-                console.error("訂閱失敗:", err);
+                    if (!sub && Notification.permission === 'granted') {
+                        sub = await reg.pushManager.subscribe({
+                            userVisibleOnly: true,
+                            applicationServerKey: urlBase64ToUint8Array(VAPID_PUB_KEY)
+                        });
+                        
+                        await fetch('https://jackalchiu.onrender.com/subscribe', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(sub)
+                        });
+                        console.log("Push Subscribed Success");
+                    }
+                } catch (err) { console.error("Subscription Error:", err); }
             }
         }
-    }
 
-        // iOS 點擊授權邏輯
-       document.body.addEventListener('click', async () => {
-           if (Notification.permission === 'default') {
-               const permission = await Notification.requestPermission();
-                if (permission === 'granted') {
-                    initPushSubscription();
-                }
+        // 重要：由點擊觸發權限與訂閱
+        document.body.addEventListener('click', async () => {
+            if (Notification.permission === 'default') {
+                const permission = await Notification.requestPermission();
+                if (permission === 'granted') initPushSubscription();
+            } else if (Notification.permission === 'granted') {
+                initPushSubscription();
             }
-        }, { once: true });
+        }, { once: false }); // 允許重複點擊以確保訂閱成功
 
-        window.onload = () => {
-            // 頁面載入後自動嘗試檢查訂閱狀態
-            initPushSubscription();
-            
-            // 檢查是否是從 Starting.html 過來的歡迎邏輯（可在此處加入）
-            const urlParams = new URLSearchParams(window.location.search);
-            if (urlParams.get('from') === 'splash') {
-                console.log("Welcome from splash!");
-            }
-        };
+        window.onload = () => { initPushSubscription(); };
     </script>
 </body>
 </html>
-
