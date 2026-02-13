@@ -30,10 +30,10 @@
             background-size: cover; z-index: -1;
         }
 
-        /* 關鍵占位區：確保內容下移至背景文字下方 (對齊右圖布局) */
+        /* 關鍵占位區：確保內容下移至背景文字下方 */
         .top-padding-spacer {
             width: 100%;
-            height: 410px; /* 精確計算，將搜尋框推至標題下方 */
+            height: 410px; 
         }
 
         /* 搜尋框 (Search Bar) */
@@ -50,7 +50,8 @@
             border-radius: 12px;
             font-size: 16px;
             color: #333;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            /* 搜尋框陰影 */
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
         }
         .search-icon {
             position: absolute;
@@ -79,6 +80,8 @@
             align-items: center;
             gap: 12px;
             border: 1px solid rgba(255, 255, 255, 0.2);
+            /* 加入陰影效果 */
+            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
         }
         .card i { font-size: 22px; color: #4a90e2; }
         .card-info h3 { font-size: 16px; font-weight: 600; color: #4a90e2; margin-bottom: 2px; }
@@ -113,6 +116,8 @@
             align-items: center;
             gap: 12px;
             border: 1px solid rgba(255, 255, 255, 0.1);
+            /* 加入按鈕陰影效果 */
+            box-shadow: 0 6px 12px rgba(0,0,0,0.2);
         }
         .func-item i { font-size: 26px; color: #4a90e2; }
         .func-item span { font-size: 13px; color: #555; font-weight: 500; }
@@ -132,6 +137,8 @@
             justify-content: space-around;
             align-items: center;
             border: 1px solid rgba(255, 255, 255, 0.3);
+            /* 加入導航欄陰影效果 */
+            box-shadow: 0 -4px 20px rgba(0,0,0,0.15), 0 10px 20px rgba(0,0,0,0.2);
             z-index: 100;
         }
         .nav-item {
@@ -192,7 +199,6 @@
     </nav>
 
 <script>
-    // Web Push 核心邏輯保持不變
     const VAPID_PUB_KEY = "BI8v9P1eO8S_Z3uS7G6X5V4C3B2N1M0L_K9J8H7G6F5D4S3A2P1O0I9U8Y7T6R5E4W";
     function urlBase64ToUint8Array(base64String) {
         const padding = '='.repeat((4 - base64String.length % 4) % 4);
