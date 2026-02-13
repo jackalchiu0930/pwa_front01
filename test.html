@@ -152,13 +152,23 @@
         });
 
         const API_URL = "https://jackalchiu.onrender.com";
+
+        // 修正後的隨機數字獲取函式
         async function getRandomNumber() {
             try {
-                const res = await fetch(`${API_URL}/list`);
+                const res = await fetch(`${API_URL}/list`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ note: "系統請求隨機數" })
+                });
                 const data = await res.json();
                 document.getElementById('numberDisplay').innerText = data;
-            } catch (e) { alert("連線失敗"); }
+            } catch (e) { 
+                console.error(e);
+                alert("連線失敗"); 
+            }
         }
+
         async function submitUserData() {
             const val = document.getElementById('userDataInput').value;
             if (!val) return;
@@ -171,6 +181,7 @@
                 alert("提交成功");
             } catch (e) { alert("提交失敗"); }
         }
+
         async function uploadFile(file) {
             if (!file) return;
             const formData = new FormData();
