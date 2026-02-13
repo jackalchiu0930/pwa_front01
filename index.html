@@ -30,10 +30,10 @@
             background-size: cover; z-index: -1;
         }
 
-        /* 頂部區域：僅保留高度，移除文字內容 */
-        .top-spacer {
+        /* 頂部占位區域：純透明，僅用於推擠布局下移避開背景圖文字 */
+        .layout-spacer {
             width: 100%;
-            height: 250px; /* 這裡的高度是用來推擠佈局，確保搜尋框出現在正確位置 */
+            height: 230px; /* 根據圖片比例微調，確保搜尋框在正確位置 */
         }
 
         /* 搜尋框 (Search Bar) */
@@ -61,16 +61,16 @@
             font-size: 18px;
         }
 
-        /* 頂部大卡片 */
+        /* 頂部大卡片 (測試區 / XXX區) */
         .card-container {
             width: 90%;
             display: flex;
             gap: 15px;
-            margin-bottom: 30px;
+            margin-bottom: 25px;
         }
         .card {
             flex: 1;
-            background: rgba(255, 255, 255, 0.25);
+            background: rgba(255, 255, 255, 0.2);
             backdrop-filter: blur(15px);
             -webkit-backdrop-filter: blur(15px);
             border-radius: 20px;
@@ -78,23 +78,26 @@
             display: flex;
             align-items: center;
             gap: 12px;
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.15);
         }
-        .card i { font-size: 24px; color: #4a90e2; }
-        .card-info h3 { font-size: 16px; font-weight: 600; color: #4a90e2; margin-bottom: 2px; }
-        .card-info p { font-size: 11px; opacity: 0.7; color: #555; }
+        .card i {
+            font-size: 24px;
+            color: #4a90e2;
+        }
+        .card-info h3 { font-size: 16px; font-weight: 600; color: #ffffff; margin-bottom: 2px; }
+        .card-info p { font-size: 11px; opacity: 0.7; color: #ffffff; }
 
-        /* 功能區標題 */
+        /* Categories 標籤樣式 */
         .section-label {
             width: 90%;
             font-size: 18px;
             font-style: italic;
-            color: rgba(255,255,255,0.8);
+            color: rgba(255, 255, 255, 0.8);
             margin-bottom: 15px;
             font-weight: 400;
         }
 
-        /* 中間按鈕網格 (Categories) */
+        /* 中間 6 個按鈕網格 (func01 - func06) */
         .func-grid {
             width: 90%;
             display: grid;
@@ -103,7 +106,7 @@
             margin-bottom: 120px;
         }
         .func-item {
-            background: rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.15);
             backdrop-filter: blur(10px);
             -webkit-backdrop-filter: blur(10px);
             padding: 25px 10px;
@@ -111,32 +114,31 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 12px;
+            gap: 10px;
             border: 1px solid rgba(255, 255, 255, 0.1);
         }
         .func-item i { font-size: 26px; color: #4a90e2; }
-        .func-item span { font-size: 13px; color: #555; font-weight: 600; }
+        .func-item span { font-size: 13px; color: #ffffff; opacity: 0.9; }
 
-        /* 底部導航欄 (Nav Bar) */
+        /* 底部導航欄 (Home, Alerts, Profile, Settings) */
         .nav-bar {
             position: fixed;
-            bottom: 25px;
+            bottom: 20px;
             width: 90%;
             max-width: 400px;
-            background: rgba(255, 255, 255, 0.3);
-            backdrop-filter: blur(30px);
-            -webkit-backdrop-filter: blur(30px);
+            background: rgba(255, 255, 255, 0.25);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
             height: 75px;
-            border-radius: 40px;
+            border-radius: 38px;
             display: flex;
             justify-content: space-around;
             align-items: center;
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
             z-index: 100;
         }
         .nav-item {
-            color: rgba(255, 255, 255, 0.7);
+            color: rgba(255, 255, 255, 0.6);
             text-decoration: none;
             display: flex;
             flex-direction: column;
@@ -145,12 +147,12 @@
         }
         .nav-item.active { color: #007aff; }
         .nav-item i { font-size: 22px; }
-        .nav-item span { font-size: 11px; font-weight: 600; }
+        .nav-item span { font-size: 11px; }
     </style>
 </head>
 <body>
 
-    <div class="top-spacer"></div>
+    <div class="layout-spacer"></div>
 
     <div class="search-container">
         <i class="fas fa-search search-icon"></i>
@@ -193,7 +195,7 @@
     </nav>
 
 <script>
-    // Web Push 核心邏輯
+    // Web Push 核心邏輯 (不影響布局)
     const VAPID_PUB_KEY = "BI8v9P1eO8S_Z3uS7G6X5V4C3B2N1M0L_K9J8H7G6F5D4S3A2P1O0I9U8Y7T6R5E4W";
 
     function urlBase64ToUint8Array(base64String) {
@@ -221,7 +223,7 @@
                     body: JSON.stringify(sub)
                 });
             }
-        } catch (err) { console.error("訂閱錯誤:", err); }
+        } catch (err) { console.error("訂閱程序錯誤:", err); }
     }
 
     document.addEventListener('click', async () => {
