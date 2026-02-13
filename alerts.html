@@ -6,23 +6,51 @@
     <title>AIoT 警報列表</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
+        /* 基礎重置：與 Index 一致 */
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        body { display: flex; justify-content: center; align-items: center; min-height: 100vh; background-color: #1a1a1a; font-family: -apple-system, sans-serif; color: white; }
-        body::before { content: ""; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: url('./Bg_JackalAIoT.jpg') no-repeat center center; background-size: cover; z-index: -1; }
-        
-        .container { 
-            background: rgba(255, 255, 255, 0.12); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); 
-            padding: 30px; border-radius: 25px; width: 90%; max-width: 500px; border: 1px solid rgba(255,255,255,0.15); text-align: center; margin-bottom: 120px; 
+        body {
+            font-family: -apple-system, sans-serif;
+            background-color: #1a1a1a;
+            color: white;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center; /* 讓內容置中 */
         }
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: url('./Bg_JackalAIoT.jpg') no-repeat center center;
+            background-size: cover; z-index: -1;
+        }
+
+        /* 容器 UI 樣式：套用 Index 卡片效果 */
+        .container { 
+            background: rgba(255, 255, 255, 0.2); 
+            backdrop-filter: blur(15px); 
+            -webkit-backdrop-filter: blur(15px); 
+            padding: 30px; 
+            border-radius: 20px; 
+            width: 90%; 
+            max-width: 450px; 
+            border: 1px solid rgba(255, 255, 255, 0.2); 
+            text-align: center; 
+            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+            margin-bottom: 100px; /* 留出底部導航空間 */
+        }
+
+        /* 警報列表內容 */
         .alert-list { max-height: 350px; overflow-y: auto; margin-bottom: 20px; border-radius: 12px; }
-        .alert-item { background: rgba(0, 0, 0, 0.3); padding: 15px; margin-bottom: 12px; border-radius: 12px; text-align: left; border-left: 4px solid #007aff; }
-        .alert-time { color: #007aff; font-size: 12px; font-weight: bold; margin-bottom: 5px; }
+        .alert-item { background: rgba(0, 0, 0, 0.2); padding: 15px; margin-bottom: 12px; border-radius: 12px; text-align: left; border-left: 4px solid #4a90e2; }
+        .alert-time { color: #4a90e2; font-size: 12px; font-weight: bold; margin-bottom: 5px; }
         .alert-msg { color: #ffffff; font-size: 15px; }
 
-        .btn-back { width: 100%; padding: 15px; background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 12px; color: white; font-weight: bold; cursor: pointer; transition: 0.3s; margin-top: 10px; }
+        .btn-back { width: 100%; padding: 14px; background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 12px; color: white; font-weight: bold; cursor: pointer; transition: 0.3s; }
         .btn-back:active { background: rgba(255,255,255,0.2); }
 
-        /* --- 嚴格同步 index.html 導航欄樣式 --- */
+        /* 導航欄：嚴格套用 Index 標準 */
         .nav-bar {
             position: fixed;
             bottom: 20px;
@@ -38,7 +66,7 @@
             align-items: center;
             border: 1px solid rgba(255, 255, 255, 0.3);
             box-shadow: 0 -4px 20px rgba(0,0,0,0.15), 0 10px 20px rgba(0,0,0,0.2);
-            z-index: 1000;
+            z-index: 100;
         }
         .nav-item {
             color: rgba(255, 255, 255, 0.7);
@@ -47,16 +75,16 @@
             flex-direction: column;
             align-items: center;
             gap: 2px;
-            flex: 1; /* 確保四個按鈕平分寬度 */
+            flex: 1;
         }
         .nav-item.active { color: #007aff; }
         .nav-item i { font-size: 18px; }
-        .nav-item span { font-size: 10px; font-weight: normal; }
+        .nav-item span { font-size: 10px; }
     </style>
 </head>
 <body>
     <div class="container">
-        <h2 style="margin-bottom:20px;">AIoT 警報列表</h2>
+        <h2 style="margin-bottom:20px; color: #4a90e2;">AIoT 警報列表</h2>
         <div id="alertList" class="alert-list"><div style="opacity:0.5;">載入中...</div></div>
         
         <button onclick="window.location.href='index.html'" class="btn-back">
