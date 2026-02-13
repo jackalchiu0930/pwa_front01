@@ -1,6 +1,9 @@
 // --- 版本配置區 (在此修改版本號，啟動畫面將自動同步) ---
-const FE_VERSION = '1.0.0'; 
-const BE_VERSION = '1.0.0';
+const FE_VERSION = '1.0.3'; 
+const BE_VERSION = '1.0.3';
+const AUTHOR = 'AIoT Center | Jackal.Chiu';
+const ORG = 'PSA華科事業群';
+
 const CACHE_NAME = 'jackal-v' + FE_VERSION; // 與前端版本連動
 
 const ASSETS = [
@@ -9,6 +12,7 @@ const ASSETS = [
   './index.html', 
   './test.html', 
   './alerts.html',
+  './about.html',
   './01_Starting.jpg', 
   './Bg_JackalAIoT.jpg', 
   './Icon_Jackal.jpg', 
