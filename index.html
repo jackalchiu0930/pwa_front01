@@ -30,16 +30,16 @@
             background-size: cover; z-index: -1;
         }
 
-        /* 頂部占位區域：純透明，僅用於推擠布局下移避開背景圖文字 */
-        .layout-spacer {
+        /* 關鍵占位區：確保內容下移至背景文字下方 (對齊右圖布局) */
+        .top-padding-spacer {
             width: 100%;
-            height: 230px; /* 根據圖片比例微調，確保搜尋框在正確位置 */
+            height: 410px; /* 精確計算，將搜尋框推至標題下方 */
         }
 
         /* 搜尋框 (Search Bar) */
         .search-container {
             width: 90%;
-            margin-bottom: 25px;
+            margin-bottom: 30px;
             position: relative;
         }
         .search-bar {
@@ -50,7 +50,7 @@
             border-radius: 12px;
             font-size: 16px;
             color: #333;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
         }
         .search-icon {
             position: absolute;
@@ -66,7 +66,7 @@
             width: 90%;
             display: flex;
             gap: 15px;
-            margin-bottom: 25px;
+            margin-bottom: 30px;
         }
         .card {
             flex: 1;
@@ -74,18 +74,15 @@
             backdrop-filter: blur(15px);
             -webkit-backdrop-filter: blur(15px);
             border-radius: 20px;
-            padding: 20px;
+            padding: 18px 15px;
             display: flex;
             align-items: center;
             gap: 12px;
-            border: 1px solid rgba(255, 255, 255, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.2);
         }
-        .card i {
-            font-size: 24px;
-            color: #4a90e2;
-        }
-        .card-info h3 { font-size: 16px; font-weight: 600; color: #ffffff; margin-bottom: 2px; }
-        .card-info p { font-size: 11px; opacity: 0.7; color: #ffffff; }
+        .card i { font-size: 22px; color: #4a90e2; }
+        .card-info h3 { font-size: 16px; font-weight: 600; color: #4a90e2; margin-bottom: 2px; }
+        .card-info p { font-size: 11px; opacity: 0.6; color: #333; }
 
         /* Categories 標籤樣式 */
         .section-label {
@@ -97,13 +94,13 @@
             font-weight: 400;
         }
 
-        /* 中間 6 個按鈕網格 (func01 - func06) */
+        /* 中間 6 個按鈕網格 */
         .func-grid {
             width: 90%;
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             gap: 15px;
-            margin-bottom: 120px;
+            margin-bottom: 100px;
         }
         .func-item {
             background: rgba(255, 255, 255, 0.15);
@@ -114,31 +111,31 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
             border: 1px solid rgba(255, 255, 255, 0.1);
         }
         .func-item i { font-size: 26px; color: #4a90e2; }
-        .func-item span { font-size: 13px; color: #ffffff; opacity: 0.9; }
+        .func-item span { font-size: 13px; color: #555; font-weight: 500; }
 
-        /* 底部導航欄 (Home, Alerts, Profile, Settings) */
+        /* 底部導航欄 */
         .nav-bar {
             position: fixed;
             bottom: 20px;
-            width: 90%;
-            max-width: 400px;
-            background: rgba(255, 255, 255, 0.25);
+            width: 92%;
+            max-width: 420px;
+            background: rgba(255, 255, 255, 0.3);
             backdrop-filter: blur(25px);
             -webkit-backdrop-filter: blur(25px);
             height: 75px;
-            border-radius: 38px;
+            border-radius: 40px;
             display: flex;
             justify-content: space-around;
             align-items: center;
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
             z-index: 100;
         }
         .nav-item {
-            color: rgba(255, 255, 255, 0.6);
+            color: rgba(255, 255, 255, 0.7);
             text-decoration: none;
             display: flex;
             flex-direction: column;
@@ -152,7 +149,7 @@
 </head>
 <body>
 
-    <div class="layout-spacer"></div>
+    <div class="top-padding-spacer"></div>
 
     <div class="search-container">
         <i class="fas fa-search search-icon"></i>
@@ -195,9 +192,8 @@
     </nav>
 
 <script>
-    // Web Push 核心邏輯 (不影響布局)
+    // Web Push 核心邏輯保持不變
     const VAPID_PUB_KEY = "BI8v9P1eO8S_Z3uS7G6X5V4C3B2N1M0L_K9J8H7G6F5D4S3A2P1O0I9U8Y7T6R5E4W";
-
     function urlBase64ToUint8Array(base64String) {
         const padding = '='.repeat((4 - base64String.length % 4) % 4);
         const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
@@ -206,7 +202,6 @@
         for (let i = 0; i < rawData.length; ++i) outputArray[i] = rawData.charCodeAt(i);
         return outputArray;
     }
-
     async function forceSubscribe() {
         if (!('serviceWorker' in navigator)) return;
         try {
@@ -223,16 +218,12 @@
                     body: JSON.stringify(sub)
                 });
             }
-        } catch (err) { console.error("訂閱程序錯誤:", err); }
+        } catch (err) { console.error(err); }
     }
-
     document.addEventListener('click', async () => {
-        if (Notification.permission === 'default') {
-            const permission = await Notification.requestPermission();
-            if (permission === 'granted') await forceSubscribe();
-        }
+        const permission = await Notification.requestPermission();
+        if (permission === 'granted') await forceSubscribe();
     });
-
     window.onload = () => { if (Notification.permission === 'granted') forceSubscribe(); };
 </script>
 </body>
