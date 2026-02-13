@@ -1,6 +1,6 @@
 // --- 版本配置區 (在此修改版本號，啟動畫面將自動同步) ---
-const FE_VERSION = '1.0.3'; 
-const BE_VERSION = '1.0.3';
+const FE_VERSION = '1.0.4'; 
+const BE_VERSION = '1.0.4';
 const AUTHOR = 'AIoT Center | Jackal.Chiu';
 const ORG = 'PSA華科事業群';
 
@@ -52,3 +52,4 @@ self.addEventListener('notificationclick', (event) => {
   event.notification.close();
   event.waitUntil(clients.openWindow(event.notification.data.url));
 });
+
