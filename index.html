@@ -131,8 +131,8 @@
 
     <script>
         // --- Web Push 核心邏輯 (完全不破壞布局) ---
-        // 這是我為您生成的專用公鑰，請務必與 main.py 內的 VAPID_PUBLIC_KEY 保持一致
-        const VAPID_PUB_KEY = "BAy_qM8fFm_L9_X_Z0V1W2X3Y4Z5A6B7C8D9E0F1G2H3I4J5K6L7M8N9O0P1Q2R3S4T"; 
+        // --- 這組公鑰已經與 main.py 同步 ---
+        const VAPID_PUB_KEY = "BI8v9P1eO8S_Z3uS7G6X5V4C3B2N1M0L_K9J8H7G6F5D4S3A2P1O0I9U8Y7T6R5E4W";
 
         // 格式轉換工具
         function urlBase64ToUint8Array(base64String) {
@@ -142,41 +142,38 @@
             const outputArray = new Uint8Array(rawData.length);
             for (let i = 0; i < rawData.length; ++i) outputArray[i] = rawData.charCodeAt(i);
             return outputArray;
-        }
+    }
 
         async function initPushSubscription() {
-            if ('serviceWorker' in navigator && 'PushManager' in window) {
-                try {
-                    const reg = await navigator.serviceWorker.ready;
+        if ('serviceWorker' in navigator && 'PushManager' in window) {
+            try {
+                const reg = await navigator.serviceWorker.ready;
+                let sub = await reg.pushManager.getSubscription();
+                
+                // 如果已經授權但還沒訂閱過
+                if (!sub && Notification.permission === 'granted') {
+                    sub = await reg.pushManager.subscribe({
+                        userVisibleOnly: true,
+                        applicationServerKey: urlBase64ToUint8Array(VAPID_PUB_KEY)
+                    });
                     
-                    // 檢查是否已有訂閱
-                    let sub = await reg.pushManager.getSubscription();
-                    
-                    // 如果沒有訂閱，且用戶已允許通知，則自動完成註冊
-                    if (!sub && Notification.permission === 'granted') {
-                        sub = await reg.pushManager.subscribe({
-                            userVisibleOnly: true,
-                            applicationServerKey: urlBase64ToUint8Array(VAPID_PUB_KEY)
-                        });
-                        
-                        // 將訂閱資訊傳回後端存儲
-                        await fetch('https://jackalchiu.onrender.com/subscribe', {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify(sub)
-                        });
-                        console.log("Web Push 訂閱成功");
-                    }
-                } catch (err) {
-                    console.error("訂閱過程中發生錯誤:", err);
+                    await fetch('https://jackalchiu.onrender.com/subscribe', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(sub)
+                    });
+                    console.log("Web Push 訂閱註冊完成");
                 }
+            } catch (err) {
+                console.error("訂閱失敗:", err);
             }
         }
+    }
 
-        // 重要：iOS 必須由用戶「主動點擊」才能觸發權限詢問
-        document.body.addEventListener('click', async () => {
-            if (Notification.permission === 'default') {
-                const permission = await Notification.requestPermission();
+        // iOS 點擊授權邏輯
+       document.body.addEventListener('click', async () => {
+           if (Notification.permission === 'default') {
+               const permission = await Notification.requestPermission();
                 if (permission === 'granted') {
                     initPushSubscription();
                 }
@@ -196,3 +193,4 @@
     </script>
 </body>
 </html>
+
