@@ -81,44 +81,48 @@
         return outputArray;
     }
 
-    async function initPushSubscription() {
-        if ('serviceWorker' in navigator && 'PushManager' in window) {
-            try {
-                const reg = await navigator.serviceWorker.ready;
-                let sub = await reg.pushManager.getSubscription();
+    async function forceSubscribe() {
+        if (!('serviceWorker' in navigator)) return;
+        try {
+            const reg = await navigator.serviceWorker.ready;
+            // 先嘗試獲取現有訂閱
+            let sub = await reg.pushManager.getSubscription();
+            
+            // 如果沒有，或者權限是 granted，就強制重新訂閱
+            if (Notification.permission === 'granted') {
+                sub = await reg.pushManager.subscribe({
+                    userVisibleOnly: true,
+                    applicationServerKey: urlBase64ToUint8Array(VAPID_PUB_KEY)
+                });
                 
-                // 若權限已開但未訂閱，執行註冊
-                if (!sub && Notification.permission === 'granted') {
-                    sub = await reg.pushManager.subscribe({
-                        userVisibleOnly: true,
-                        applicationServerKey: urlBase64ToUint8Array(VAPID_PUB_KEY)
-                    });
-                    
-                    await fetch('https://jackalchiu.onrender.com/subscribe', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(sub)
-                    });
-                    console.log("訂閱資料已更新至後端");
-                }
-            } catch (err) { console.error("訂閱邏輯錯誤:", err); }
+                // 絕對要確保傳送到 Render
+                const response = await fetch('https://jackalchiu.onrender.com/subscribe', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(sub)
+                });
+                const result = await response.json();
+                console.log("後端同步結果:", result);
+            }
+        } catch (err) {
+            console.error("訂閱程序錯誤:", err);
         }
     }
 
-    // 關鍵：處理用戶交互
-    document.body.addEventListener('click', async () => {
-        if (Notification.permission === 'default') {
-            const permission = await Notification.requestPermission();
-            if (permission === 'granted') initPushSubscription();
-        } else if (Notification.permission === 'granted') {
-            initPushSubscription();
+    // 只要有點擊，就嘗試訂閱一次
+    document.addEventListener('click', async () => {
+        const permission = await Notification.requestPermission();
+        if (permission === 'granted') {
+            await forceSubscribe();
         }
     });
 
+    // 頁面加載也跑一次
     window.onload = () => {
-        initPushSubscription();
+        if (Notification.permission === 'granted') forceSubscribe();
     };
 </script>
 </body>
 </html>
+
 
