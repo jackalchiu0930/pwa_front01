@@ -31,6 +31,28 @@
             height: 410px; 
         }
 
+        /* --- 零延時觸控樣式 --- */
+        .tap-target {
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.05s linear;
+        }
+        .tap-target::after {
+            content: "";
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(255, 255, 255, 0);
+            transition: background 0.05s linear;
+            pointer-events: none;
+            z-index: 2;
+        }
+        .tapped {
+            transform: scale(0.96) !important;
+        }
+        .tapped::after {
+            background: rgba(255, 255, 255, 0.4) !important;
+        }
+
         /* 容器樣式 - 對齊 Index 卡片效果 */
         .container { 
             background: rgba(255, 255, 255, 0.2); 
@@ -50,9 +72,8 @@
         /* UI 元素樣式 */
         .ui-element { width: 100%; padding: 14px; margin: 10px 0; border-radius: 12px; border: none; font-size: 16px; outline: none; }
         
-        .btn { cursor: pointer; font-weight: 600; color: white; transition: 0.2s; display: block; text-decoration: none; }
+        .btn { cursor: pointer; font-weight: 600; color: white; display: block; text-decoration: none; }
         .btn-blue { background: rgba(74, 144, 226, 0.8); border: 1px solid rgba(255,255,255,0.2); }
-        .btn-blue:active { transform: scale(0.98); background: rgba(74, 144, 226, 1); }
         
         .display-box { background: rgba(0, 0, 0, 0.2); border: 1px dashed #4a90e2; color: #4a90e2; font-size: 28px; font-weight: bold; min-height: 65px; display: flex; justify-content: center; align-items: center; }
         
@@ -83,7 +104,10 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 2px;
+            justify-content: center;
+            flex: 1;
+            height: 80%;
+            border-radius: 20px;
         }
         .nav-item.active { color: #007aff; }
         .nav-item i { font-size: 18px; }
@@ -96,25 +120,36 @@
     <div class="container">
         <h2>AIoT 測試區</h2>
         <div id="numberDisplay" class="ui-element display-box">---</div>
-        <button class="ui-element btn btn-blue" onclick="getRandomNumber()">請求隨機數字</button>
+        <button class="ui-element btn btn-blue tap-target" onclick="getRandomNumber()">請求隨機數字</button>
         
         <input type="text" id="userDataInput" class="ui-element" style="background: rgba(255,255,255,0.1); color: white;" placeholder="輸入筆記內容...">
-        <button class="ui-element btn btn-blue" onclick="submitUserData()">提交數據</button>
+        <button class="ui-element btn btn-blue tap-target" onclick="submitUserData()">提交數據</button>
 
         <div class="upload-section">
-            <label class="file-label" for="fileInput"><i class="fas fa-cloud-upload-alt"></i> 選擇文件...</label>
+            <label class="file-label tap-target" for="fileInput"><i class="fas fa-cloud-upload-alt"></i> 選擇文件...</label>
             <input type="file" id="fileInput" style="display:none" onchange="uploadFile(this.files[0])">
         </div>
     </div>
 
     <nav class="nav-bar">
-        <a href="index.html" class="nav-item"><i class="fas fa-home"></i><span>Home</span></a>
-        <a href="alerts.html" class="nav-item"><i class="fas fa-bell"></i><span>Alerts</span></a>
-        <div class="nav-item"><i class="fas fa-user"></i><span>Profile</span></div>
-        <div class="nav-item"><i class="fas fa-cog"></i><span>Settings</span></div>
+        <a href="index.html" class="nav-item tap-target"><i class="fas fa-home"></i><span>Home</span></a>
+        <a href="alerts.html" class="nav-item tap-target"><i class="fas fa-bell"></i><span>Alerts</span></a>
+        <div class="nav-item tap-target"><i class="fas fa-user"></i><span>Profile</span></div>
+        <div class="nav-item tap-target"><i class="fas fa-cog"></i><span>Settings</span></div>
     </nav>
 
     <script>
+        // --- 零延時觸控邏輯 ---
+        const targets = document.querySelectorAll('.tap-target');
+        targets.forEach(btn => {
+            btn.addEventListener('touchstart', function() { this.classList.add('tapped'); }, { passive: true });
+            const removeEffect = () => { setTimeout(() => btn.classList.remove('tapped'), 100); };
+            btn.addEventListener('touchend', removeEffect);
+            btn.addEventListener('touchcancel', removeEffect);
+            btn.addEventListener('mousedown', () => btn.classList.add('tapped'));
+            btn.addEventListener('mouseup', removeEffect);
+        });
+
         const API_URL = "https://jackalchiu.onrender.com";
         async function getRandomNumber() {
             try {
