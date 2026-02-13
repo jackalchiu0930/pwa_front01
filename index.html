@@ -50,7 +50,6 @@
             border-radius: 12px;
             font-size: 16px;
             color: #333;
-            /* 搜尋框陰影 */
             box-shadow: 0 4px 12px rgba(0,0,0,0.15);
         }
         .search-icon {
@@ -80,7 +79,6 @@
             align-items: center;
             gap: 12px;
             border: 1px solid rgba(255, 255, 255, 0.2);
-            /* 加入陰影效果 */
             box-shadow: 0 8px 16px rgba(0,0,0,0.2);
         }
         .card i { font-size: 22px; color: #4a90e2; }
@@ -116,13 +114,12 @@
             align-items: center;
             gap: 12px;
             border: 1px solid rgba(255, 255, 255, 0.1);
-            /* 加入按鈕陰影效果 */
             box-shadow: 0 6px 12px rgba(0,0,0,0.2);
         }
         .func-item i { font-size: 26px; color: #4a90e2; }
         .func-item span { font-size: 13px; color: #555; font-weight: 500; }
 
-        /* 底部導航欄 */
+        /* 底部導航欄 - 高度已調窄 */
         .nav-bar {
             position: fixed;
             bottom: 20px;
@@ -131,13 +128,12 @@
             background: rgba(255, 255, 255, 0.3);
             backdrop-filter: blur(25px);
             -webkit-backdrop-filter: blur(25px);
-            height: 75px;
-            border-radius: 40px;
+            height: 60px; /* 從 75px 調窄至 60px */
+            border-radius: 30px; /* 配合高度縮減圓角 */
             display: flex;
             justify-content: space-around;
             align-items: center;
             border: 1px solid rgba(255, 255, 255, 0.3);
-            /* 加入導航欄陰影效果 */
             box-shadow: 0 -4px 20px rgba(0,0,0,0.15), 0 10px 20px rgba(0,0,0,0.2);
             z-index: 100;
         }
@@ -147,11 +143,11 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 4px;
+            gap: 2px; /* 稍微縮小間隔以適應高度 */
         }
         .nav-item.active { color: #007aff; }
-        .nav-item i { font-size: 22px; }
-        .nav-item span { font-size: 11px; }
+        .nav-item i { font-size: 18px; } /* 圖標稍微縮小 */
+        .nav-item span { font-size: 10px; } /* 字體稍微縮小 */
     </style>
 </head>
 <body>
