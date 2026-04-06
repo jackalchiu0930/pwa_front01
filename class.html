@@ -75,10 +75,40 @@
         .btn { cursor: pointer; font-weight: 600; color: white; display: block; text-decoration: none; }
         .btn-blue { background: rgba(74, 144, 226, 0.8); border: 1px solid rgba(255,255,255,0.2); }
         
-        .display-box { background: rgba(0, 0, 0, 0.2); border: 1px dashed #4a90e2; color: #4a90e2; font-size: 28px; font-weight: bold; min-height: 65px; display: flex; justify-content: center; align-items: center; }
-        
-        .upload-section { margin-top: 15px; padding-top: 15px; border-top: 1px solid rgba(255,255,255,0.1); }
-        .file-label { display: block; background: rgba(255,255,255,0.1); padding: 12px; border-radius: 10px; cursor: pointer; border: 1px solid rgba(255,255,255,0.2); font-size: 14px; color: #fff; }
+        /* 圖片顯示區域樣式 */
+        .image-display {
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px dashed #4a90e2;
+            border-radius: 12px;
+            min-height: 200px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 10px 0;
+            padding: 10px;
+        }
+        .image-display img {
+            max-width: 100%;
+            max-height: 200px;
+            border-radius: 8px;
+        }
+
+        /* 新增：文件上傳區域樣式 (與test.html一致) */
+        .upload-section { 
+            margin-top: 15px; 
+            padding-top: 15px; 
+            border-top: 1px solid rgba(255,255,255,0.1); 
+        }
+        .file-label { 
+            display: block; 
+            background: rgba(255,255,255,0.1); 
+            padding: 12px; 
+            border-radius: 10px; 
+            cursor: pointer; 
+            border: 1px solid rgba(255,255,255,0.2); 
+            font-size: 14px; 
+            color: #fff; 
+        }
 
         /* 底部導航欄 - 嚴格對齊 Index */
         .nav-bar {
@@ -118,13 +148,15 @@
     <div class="top-padding-spacer"></div>
 
     <div class="container">
-        <h2>AIoT 測試區</h2>
-        <div id="numberDisplay" class="ui-element display-box">---</div>
-        <button class="ui-element btn btn-blue tap-target" onclick="getRandomNumber()">請求隨機數字</button>
+        <h2>AIoT 圖片展示區</h2>
+        <!-- 圖片顯示區域 -->
+        <div id="imageContainer" class="image-display">
+            <span style="color: #4a90e2;">未加載圖片</span>
+        </div>
+        <!-- 加載圖片按鈕 (UI與原按鈕一致) -->
+        <button class="ui-element btn btn-blue tap-target" onclick="loadImage()">加載本機圖片</button>
         
-        <input type="text" id="userDataInput" class="ui-element" style="background: rgba(255,255,255,0.1); color: white;" placeholder="輸入筆記內容...">
-        <button class="ui-element btn btn-blue tap-target" onclick="submitUserData()">提交數據</button>
-
+        <!-- 新增：文件上傳區域 (與test.html功能一致) -->
         <div class="upload-section">
             <label class="file-label tap-target" for="fileInput"><i class="fas fa-cloud-upload-alt"></i> 選擇文件...</label>
             <input type="file" id="fileInput" style="display:none" onchange="uploadFile(this.files[0])">
@@ -132,7 +164,7 @@
     </div>
 
     <nav class="nav-bar">
-        <a href="index.html" onclick="localStorage.setItem('from_internal_nav', 'true');" class="nav-item tap-target"><i class="fas fa-home"></i><span>Home</span></a>
+        <a href="index.html" class="nav-item tap-target"><i class="fas fa-home"></i><span>Home</span></a>
         <a href="alerts.html" class="nav-item tap-target"><i class="fas fa-bell"></i><span>Alerts</span></a>
         <div class="nav-item tap-target"><i class="fas fa-user"></i><span>Profile</span></div>
         <div class="nav-item tap-target"><i class="fas fa-cog"></i><span>Settings</span></div>
@@ -140,7 +172,6 @@
     </nav>
 
     <script>
-        
         // --- 零延時觸控邏輯 ---
         const targets = document.querySelectorAll('.tap-target');
         targets.forEach(btn => {
@@ -158,41 +189,44 @@
         //                 window.location.hostname === '172.20.10.3';
         // const API_URL = isLocal ? "http://172.20.10.3:8000" : "https://jackalchiu.onrender.com";
         const API_URL = '';   // 使用相對路徑（推薦）
-        
-        // 修正後的隨機數字獲取函式
-        async function getRandomNumber() {
+
+        // 加載圖片函數 (修改：添加隨機參數避免緩存)
+        async function loadImage() {
             try {
-                const res = await fetch(`${API_URL}/list`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ note: "系統請求隨機數" }),
-                    // 加強緩存控制
+                // 新增：添加時間戳隨機參數，強制跳過緩存
+                const timestamp = new Date().getTime();
+                const response = await fetch(`${API_URL}/get-image?timestamp=${timestamp}`, {
+                    method: 'GET',
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        // 加強緩存控制
+                        'Cache-Control': 'no-cache, no-store, must-revalidate',
+                        'Pragma': 'no-cache',
+                        'Expires': '0'
+                    },
+                    // 新增：明確告訴瀏覽器不使用緩存
                     cache: 'no-cache'
                 });
-                const data = await res.json();
-                document.getElementById('numberDisplay').innerText = data;
+                
+                if (!response.ok) throw new Error("圖片加載失敗");
+                
+                // 轉換為Blob並創建圖片URL
+                const blob = await response.blob();
+                const imageUrl = URL.createObjectURL(blob);
+                
+                // 更新圖片顯示區域
+                const imageContainer = document.getElementById('imageContainer');
+                imageContainer.innerHTML = `<img src="${imageUrl}" alt="Jackal Icon">`;
+                
             } catch (e) { 
                 console.error(e);
-                alert("連線失敗"); 
+                alert("圖片加載失敗: " + e.message);
+                // 重置顯示區域
+                document.getElementById('imageContainer').innerHTML = '<span style="color: #4a90e2;">加載失敗</span>';
             }
         }
 
-        async function submitUserData() {
-            const val = document.getElementById('userDataInput').value;
-            if (!val) return;
-            try {
-                await fetch(`${API_URL}/list`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ note: val }),
-                    cache: 'no-cache'
-                });
-                alert("提交成功");
-                // 清空輸入框
-                document.getElementById('userDataInput').value = '';
-            } catch (e) { alert("提交失敗"); }
-        }
-
+        // 新增：文件上傳成功後自動重新加載圖片（優化體驗，非必須）
         async function uploadFile(file) {
             if (!file) return;
             const formData = new FormData();
@@ -204,6 +238,8 @@
                     cache: 'no-cache'
                 });
                 alert("文件上傳成功");
+                // 新增：上傳成功後自動加載最新圖片
+                loadImage();
                 // 重置文件選擇框
                 document.getElementById('fileInput').value = '';
             } catch (e) { alert("上傳失敗"); }

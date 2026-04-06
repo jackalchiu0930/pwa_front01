@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>QR Code 掃描 - AIoT Platform</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
+    
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        body {
+            font-family: -apple-system, sans-serif;
+            background-color: #1a1a1a;
+            color: white;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: url('./Bg_JackalAIoT.jpg') no-repeat center center;
+            background-size: cover; 
+            z-index: -1;
+        }
+
+        .top-padding-spacer { width: 100%; height: 410px; }
+
+        .tap-target {
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.05s linear;
+        }
+        .tap-target::after {
+            content: "";
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(255, 255, 255, 0);
+            transition: background 0.05s linear;
+            pointer-events: none;
+            z-index: 2;
+        }
+        .tapped { transform: scale(0.96) !important; }
+        .tapped::after { background: rgba(255, 255, 255, 0.4) !important; }
+
+        .container { 
+            background: rgba(255, 255, 255, 0.2); 
+            backdrop-filter: blur(15px); 
+            -webkit-backdrop-filter: blur(15px); 
+            padding: 25px 20px; 
+            border-radius: 20px; 
+            width: 90%; 
+            border: 1px solid rgba(255, 255, 255, 0.2); 
+            text-align: center; 
+            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+            margin-bottom: 100px;
+        }
+
+        h2 { 
+            font-size: 20px; 
+            margin-bottom: 25px; 
+            color: #4a90e2; 
+        }
+
+        .scan-container {
+            position: relative;
+            width: 100%;
+            max-width: 360px;
+            aspect-ratio: 1 / 1;
+            margin: 0 auto 20px;
+            border-radius: 20px;
+            overflow: hidden;
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255,255,255,0.3);
+            transition: all 0.3s ease;
+        }
+
+        #video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: none; /* 預設隱藏，開始掃描後顯示 */
+        }
+
+        .scan-mask {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to bottom, 
+                transparent 40%, 
+                rgba(0, 255, 255, 0.7) 50%, 
+                transparent 60%);
+            background-size: 100% 400%;
+            animation: scanMove 1.8s linear infinite;
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.6);
+            pointer-events: none;
+            display: none;
+        }
+
+        @keyframes scanMove {
+            0% { background-position: 0 0; }
+            100% { background-position: 0 100%; }
+        }
+
+        .loading-overlay {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0,0,0,0.4);
+            z-index: 10;
+        }
+
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid rgba(255,255,255,0.2);
+            border-top: 5px solid #4a90e2;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .result-container {
+            margin: 15px 0;
+            padding: 15px;
+            background: rgba(0,0,0,0.3);
+            border-radius: 12px;
+            min-height: 80px;
+            font-size: 15px;
+            word-break: break-all;
+            text-align: left;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 14px;
+            margin: 8px 0;
+            border-radius: 12px;
+            border: none;
+            font-size: 16px;
+            font-weight: 600;
+            color: white;
+            cursor: pointer;
+        }
+        .btn-green { background: rgba(76, 175, 80, 0.9); }
+        .btn-red { background: rgba(244, 67, 54, 0.9); }
+        .btn-blue { background: rgba(74, 144, 226, 0.9); }
+
+        .nav-bar {
+            position: fixed;
+            bottom: 20px;
+            width: 92%;
+            max-width: 420px;
+            background: rgba(255, 255, 255, 0.3);
+            backdrop-filter: blur(25px);
+            height: 60px;
+            border-radius: 30px;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 -4px 20px rgba(0,0,0,0.2);
+            z-index: 100;
+        }
+        .nav-item {
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            flex: 1;
+            height: 80%;
+            border-radius: 20px;
+        }
+        .nav-item i { font-size: 18px; }
+        .nav-item span { font-size: 10px; }
+    </style>
+</head>
+<body>
+    <div class="top-padding-spacer"></div>
+
+    <div class="container">
+        <h2><i class="fas fa-qrcode"></i> QR Code 掃描</h2>
+        
+        <div class="scan-container" id="scanArea">
+            <video id="video" autoplay playsinline muted></video>
+            <div class="scan-mask" id="scanMask"></div>
+            
+            <!-- 加載動畫 -->
+            <div class="loading-overlay" id="loadingOverlay">
+                <div class="loading-spinner"></div>
+            </div>
+        </div>
+
+        <div class="result-container" id="resultContainer" style="display: none;">
+            <strong>掃描結果：</strong><br>
+            <span id="resultText"></span>
+        </div>
+
+        <button class="btn btn-green tap-target" id="startBtn">
+            <i class="fas fa-camera"></i> 開始掃描
+        </button>
+        
+        <button class="btn btn-red tap-target" id="stopBtn" style="display: none;">
+            <i class="fas fa-stop"></i> 停止掃描
+        </button>
+
+        <button class="btn btn-blue tap-target" onclick="document.getElementById('fileInput').click()">
+            <i class="fas fa-image"></i> 從相簿選擇圖片
+        </button>
+        
+        <input type="file" id="fileInput" accept="image/*" style="display: none;" onchange="handleImage(this)">
+    </div>
+
+    <nav class="nav-bar">
+        <a href="index.html" class="nav-item tap-target"><i class="fas fa-home"></i><span>Home</span></a>
+        <a href="alerts.html" class="nav-item tap-target"><i class="fas fa-bell"></i><span>Alerts</span></a>
+        <a href="menu02.html" class="nav-item tap-target"><i class="fas fa-th-large"></i><span>Menu</span></a>
+        <a href="about.html" class="nav-item tap-target"><i class="fas fa-info-circle"></i><span>About</span></a>
+    </nav>
+
+    <script>
+        // 零延時觸控效果
+        function applyTapEffect() {
+            document.querySelectorAll('.tap-target').forEach(btn => {
+                btn.addEventListener('touchstart', () => btn.classList.add('tapped'), { passive: true });
+                const remove = () => setTimeout(() => btn.classList.remove('tapped'), 100);
+                btn.addEventListener('touchend', remove);
+                btn.addEventListener('touchcancel', remove);
+                btn.addEventListener('mousedown', () => btn.classList.add('tapped'));
+                btn.addEventListener('mouseup', remove);
+            });
+        }
+
+        let video = document.getElementById('video');
+        let scanMask = document.getElementById('scanMask');
+        let loadingOverlay = document.getElementById('loadingOverlay');
+        let resultContainer = document.getElementById('resultContainer');
+        let resultText = document.getElementById('resultText');
+        let startBtn = document.getElementById('startBtn');
+        let stopBtn = document.getElementById('stopBtn');
+        let stream = null;
+        let scanInterval = null;
+
+        async function startCamera() {
+            try {
+                // 顯示加載動畫
+                loadingOverlay.style.display = 'flex';
+                startBtn.style.display = 'none';
+
+                stream = await navigator.mediaDevices.getUserMedia({
+                    video: { 
+                        facingMode: { ideal: "environment" },
+                        width: { ideal: 1280 },
+                        height: { ideal: 720 }
+                    }
+                });
+
+                video.srcObject = stream;
+                await video.play();
+
+                // 隱藏加載，顯示掃描線
+                loadingOverlay.style.display = 'none';
+                video.style.display = 'block';
+                scanMask.style.display = 'block';
+                stopBtn.style.display = 'block';
+
+                scanInterval = setInterval(scanQRCode, 120);
+
+            } catch (err) {
+                console.error(err);
+                loadingOverlay.style.display = 'none';
+                startBtn.style.display = 'block';
+                alert("無法開啟攝像頭\n請確保已授予權限，並使用 HTTPS 環境");
+            }
+        }
+
+        function stopCamera() {
+            if (stream) {
+                stream.getTracks().forEach(track => track.stop());
+                stream = null;
+            }
+            video.pause();
+            video.srcObject = null;
+            video.style.display = 'none';
+
+            if (scanInterval) {
+                clearInterval(scanInterval);
+                scanInterval = null;
+            }
+
+            scanMask.style.display = 'none';
+            loadingOverlay.style.display = 'none';
+            startBtn.style.display = 'block';
+            stopBtn.style.display = 'none';
+        }
+
+        function scanQRCode() {
+            if (video.readyState !== video.HAVE_ENOUGH_DATA) return;
+
+            const canvas = document.createElement('canvas');
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(video, 0, 0);
+
+            const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            const code = jsQR(imageData.data, canvas.width, canvas.height, {
+                inversionAttempts: "attemptBoth"
+            });
+
+            if (code) {
+                stopCamera();
+                resultText.textContent = code.data;
+                resultContainer.style.display = 'block';
+
+                if (code.data.includes("classjoin.html")) {
+                    setTimeout(() => {
+                        window.location.href = code.data;
+                    }, 800);
+                }
+            }
+        }
+
+        async function handleImage(input) {
+            const file = input.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const img = new Image();
+                img.onload = function() {
+                    const canvas = document.createElement('canvas');
+                    canvas.width = img.width;
+                    canvas.height = img.height;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0);
+
+                    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                    const code = jsQR(imageData.data, canvas.width, canvas.height);
+
+                    if (code) {
+                        resultText.textContent = code.data;
+                        resultContainer.style.display = 'block';
+
+                        if (code.data.includes("classjoin.html")) {
+                            setTimeout(() => window.location.href = code.data, 1000);
+                        }
+                    } else {
+                        alert("未能識別 QR Code，請確保圖片清晰且光線充足");
+                    }
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        // 按鈕事件
+        startBtn.addEventListener('click', startCamera);
+        stopBtn.addEventListener('click', stopCamera);
+
+        // 初始化
+        window.onload = () => {
+            applyTapEffect();
+        };
+
+        window.addEventListener('beforeunload', stopCamera);
+    </script>
+</body>
+</html>
