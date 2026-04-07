@@ -32,20 +32,4 @@ self.addEventListener('activate', (e) => {
   );
 });
 
-self.addEventListener('push', (event) => {
-  let data = { title: 'Jackal AIoT', body: '設備通知' };
-  try { data = event.data.json(); } catch (e) {}
-  const options = {
-    body: data.body,
-    icon: './Icon_Jackal.jpg',
-    badge: './Icon_Jackal.jpg',
-    vibrate: [200, 100, 200],
-    data: { url: './alerts.html' }
-  };
-  event.waitUntil(self.registration.showNotification(data.title, options));
-});
-
-self.addEventListener('notificationclick', (event) => {
-  event.notification.close();
-  event.waitUntil(clients.openWindow(event.notification.data.url));
-});
+// 已移除 push 與 notificationclick 事件監聽器
