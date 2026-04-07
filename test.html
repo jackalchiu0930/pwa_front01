@@ -55,28 +55,28 @@
 
 <script>
     // 獲取隨機數字與提交紀錄
-    async function getRandomNumber() {
-        const display = document.getElementById('numberDisplay');
-        display.innerText = "讀取中...";
-        try {
-            const res = await fetch('/list', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ note: "系統請求隨機數" })
-            });
-            
-            if (!res.ok) {
-                const errorDetail = await res.text();
-                throw new Error(`伺服器錯誤 ${res.status}: ${errorDetail}`);
-            }
-            
-            const data = await res.json();
-            display.innerText = data; // 顯示後端傳回的隨機數
-        } catch (e) { 
-            display.innerText = "Error";
-            alert("連線失敗原因: " + e.message); 
+async function getRandomNumber() {
+    const display = document.getElementById('numberDisplay');
+    display.innerText = "連線中...";
+    try {
+        const res = await fetch('/list', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ note: "系統請求隨機數" })
+        });
+        
+        if (!res.ok) {
+            const errorText = await res.text();
+            throw new Error(`伺服器回應錯誤: ${res.status}`);
         }
+        
+        const data = await res.json();
+        display.innerText = data;
+    } catch (e) { 
+        display.innerText = "Error";
+        alert("連線失敗原因: " + e.message); 
     }
+}
 
     // 提交筆記內容
     async function submitUserData() {
