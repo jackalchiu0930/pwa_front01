@@ -6,108 +6,23 @@
     <title>AIoT 控制面板</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        /* 基礎重置 - 保持不變 */
+        /* 保持原樣式不變 */
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        body {
-            font-family: -apple-system, sans-serif;
-            background-color: #1a1a1a;
-            color: white;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-        body::before {
-            content: "";
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: url('./Bg_JackalAIoT.jpg') no-repeat center center;
-            background-size: cover; z-index: -1;
-        }
-
-        /* 關鍵占位區 */
-        .top-padding-spacer {
-            width: 100%;
-            height: 410px; 
-        }
-
-        /* --- 零延時觸控樣式 --- */
-        .tap-target {
-            position: relative;
-            overflow: hidden;
-            transition: transform 0.05s linear;
-        }
-        .tap-target::after {
-            content: "";
-            position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(255, 255, 255, 0);
-            transition: background 0.05s linear;
-            pointer-events: none;
-            z-index: 2;
-        }
-        .tapped {
-            transform: scale(0.96) !important;
-        }
-        .tapped::after {
-            background: rgba(255, 255, 255, 0.4) !important;
-        }
-
-        /* 容器樣式 */
-        .container { 
-            background: rgba(255, 255, 255, 0.2); 
-            backdrop-filter: blur(15px); 
-            -webkit-backdrop-filter: blur(15px);
-            padding: 25px 20px; 
-            border-radius: 20px; 
-            width: 90%; 
-            border: 1px solid rgba(255, 255, 255, 0.2); 
-            text-align: center; 
-            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
-            margin-bottom: 100px;
-        }
-
+        body { font-family: -apple-system, sans-serif; background-color: #1a1a1a; color: white; min-height: 100vh; display: flex; flex-direction: column; align-items: center; }
+        body::before { content: ""; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: url('./Bg_JackalAIoT.jpg') no-repeat center center; background-size: cover; z-index: -1; }
+        .top-padding-spacer { width: 100%; height: 410px; }
+        .tap-target { position: relative; overflow: hidden; transition: transform 0.05s linear; }
+        .tapped { transform: scale(0.96) !important; }
+        .container { background: rgba(255, 255, 255, 0.2); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); padding: 25px 20px; border-radius: 20px; width: 90%; border: 1px solid rgba(255, 255, 255, 0.2); text-align: center; box-shadow: 0 8px 16px rgba(0,0,0,0.2); margin-bottom: 100px; }
         h2 { font-size: 20px; margin-bottom: 20px; color: #4a90e2; }
-
         .ui-element { width: 100%; padding: 14px; margin: 10px 0; border-radius: 12px; border: none; font-size: 16px; outline: none; }
-        
         .btn { cursor: pointer; font-weight: 600; color: white; display: block; text-decoration: none; }
         .btn-blue { background: rgba(74, 144, 226, 0.8); border: 1px solid rgba(255,255,255,0.2); }
-        
         .display-box { background: rgba(0, 0, 0, 0.2); border: 1px dashed #4a90e2; color: #4a90e2; font-size: 28px; font-weight: bold; min-height: 65px; display: flex; justify-content: center; align-items: center; }
-        
         .upload-section { margin-top: 15px; padding-top: 15px; border-top: 1px solid rgba(255,255,255,0.1); }
         .file-label { display: block; background: rgba(255,255,255,0.1); padding: 12px; border-radius: 10px; cursor: pointer; border: 1px solid rgba(255,255,255,0.2); font-size: 14px; color: #fff; }
-
-        /* 底部導航欄 */
-        .nav-bar {
-            position: fixed;
-            bottom: 20px;
-            width: 92%;
-            max-width: 420px;
-            background: rgba(255, 255, 255, 0.3);
-            backdrop-filter: blur(25px);
-            -webkit-backdrop-filter: blur(25px);
-            height: 60px;
-            border-radius: 30px;
-            display: flex;
-            justify-content: space-around;
-            align-items: center;
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            box-shadow: 0 -4px 20px rgba(0,0,0,0.15), 0 10px 20px rgba(0,0,0,0.2);
-            z-index: 100;
-        }
-        .nav-item {
-            color: rgba(255, 255, 255, 0.7);
-            text-decoration: none;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            flex: 1;
-            height: 80%;
-            border-radius: 20px;
-        }
+        .nav-bar { position: fixed; bottom: 20px; width: 92%; max-width: 420px; background: rgba(255, 255, 255, 0.3); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px); height: 60px; border-radius: 30px; display: flex; justify-content: space-around; align-items: center; border: 1px solid rgba(255, 255, 255, 0.3); box-shadow: 0 -4px 20px rgba(0,0,0,0.15), 0 10px 20px rgba(0,0,0,0.2); z-index: 100; }
+        .nav-item { color: rgba(255, 255, 255, 0.7); text-decoration: none; display: flex; flex-direction: column; align-items: center; justify-content: center; flex: 1; height: 80%; border-radius: 20px; }
         .nav-item.active { color: #007aff; }
         .nav-item i { font-size: 18px; }
         .nav-item span { font-size: 10px; }
@@ -139,40 +54,34 @@
     </nav>
 
     <script>
-        // --- 觸控效果邏輯 ---
+        // --- 點擊效果 ---
         const targets = document.querySelectorAll('.tap-target');
         targets.forEach(btn => {
             btn.addEventListener('touchstart', function() { this.classList.add('tapped'); }, { passive: true });
-            const removeEffect = () => { setTimeout(() => btn.classList.remove('tapped'), 100); };
-            btn.addEventListener('touchend', removeEffect);
-            btn.addEventListener('touchcancel', removeEffect);
+            btn.addEventListener('touchend', () => setTimeout(() => btn.classList.remove('tapped'), 100));
         });
 
-        // --- API 連線修復邏輯 ---
-        // 使用 window.location.origin 確保無論在 Render 還是本地都能抓到正確的後端位址
-        const API_URL = window.location.origin;
-        
+        // 核心連線函式
         async function getRandomNumber() {
             const display = document.getElementById('numberDisplay');
-            display.innerText = "連線中...";
-            
+            display.innerText = "Loading...";
             try {
-                // 加入 cache: 'no-cache' 避免被 PWA/Service Worker 攔截舊數據
-                const res = await fetch(`${API_URL}/list`, {
+                // 使用根路徑 /list，並增加版本隨機數防止緩存
+                const res = await fetch(`/list?t=${Date.now()}`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ note: "系統請求隨機數" }),
-                    cache: 'no-cache'
+                    body: JSON.stringify({ note: "系統請求隨機數" })
                 });
                 
                 if (!res.ok) {
-                    throw new Error(`伺服器回應錯誤: ${res.status}`);
+                    const errorText = await res.text();
+                    throw new Error(`HTTP ${res.status}: ${errorText}`);
                 }
                 
                 const data = await res.json();
                 display.innerText = data;
             } catch (e) { 
-                console.error("Fetch Error:", e);
+                console.error("API Error:", e);
                 display.innerText = "Error";
                 alert("連線失敗原因: " + e.message); 
             }
@@ -182,11 +91,10 @@
             const val = document.getElementById('userDataInput').value;
             if (!val) return;
             try {
-                const res = await fetch(`${API_URL}/list`, {
+                const res = await fetch(`/list`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ note: val }),
-                    cache: 'no-cache'
+                    body: JSON.stringify({ note: val })
                 });
                 if (!res.ok) throw new Error(res.status);
                 alert("提交成功");
@@ -199,11 +107,7 @@
             const formData = new FormData();
             formData.append('file', file);
             try {
-                const res = await fetch(`${API_URL}/upload`, { 
-                    method: 'POST', 
-                    body: formData,
-                    cache: 'no-cache'
-                });
+                const res = await fetch(`/upload`, { method: 'POST', body: formData });
                 if (!res.ok) throw new Error(res.status);
                 alert("文件上傳成功");
                 document.getElementById('fileInput').value = '';
