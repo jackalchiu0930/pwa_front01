@@ -140,7 +140,6 @@
     </nav>
 
     <script>
-        
         // --- 零延時觸控邏輯 ---
         const targets = document.querySelectorAll('.tap-target');
         targets.forEach(btn => {
@@ -152,28 +151,31 @@
             btn.addEventListener('mouseup', removeEffect);
         });
 
-        // 動態判斷部署環境，自動切換API地址
-        // const isLocal = window.location.hostname === 'localhost' || 
-        //                 window.location.hostname === '127.0.0.1' || 
-        //                 window.location.hostname === '172.20.10.3';
-        // const API_URL = isLocal ? "http://172.20.10.3:8000" : "https://jackalchiu.onrender.com";
-        const API_URL = '';   // 使用相對路徑（推薦）
+        /**
+         * 【關鍵修復】
+         * 使用 window.location.origin 自動獲取當前環境的基礎 URL。
+         * 這樣無論是在本地 (http://172...) 還是在 Render (https://...) 
+         * 都能準確拼接出 API 的完整路徑，避免「連線失敗」問題。
+         */
+        const API_URL = window.location.origin;
         
-        // 修正後的隨機數字獲取函式
         async function getRandomNumber() {
             try {
+                // 拼接完整路徑確保連線穩定
                 const res = await fetch(`${API_URL}/list`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ note: "系統請求隨機數" }),
-                    // 加強緩存控制
                     cache: 'no-cache'
                 });
+                
+                if (!res.ok) throw new Error('Network response was not ok');
+                
                 const data = await res.json();
                 document.getElementById('numberDisplay').innerText = data;
             } catch (e) { 
-                console.error(e);
-                alert("連線失敗"); 
+                console.error("Fetch Error:", e);
+                alert("連線失敗，請檢查網路或後端狀態"); 
             }
         }
 
@@ -181,16 +183,21 @@
             const val = document.getElementById('userDataInput').value;
             if (!val) return;
             try {
-                await fetch(`${API_URL}/list`, {
+                const res = await fetch(`${API_URL}/list`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ note: val }),
                     cache: 'no-cache'
                 });
+                
+                if (!res.ok) throw new Error('Submit failed');
+                
                 alert("提交成功");
-                // 清空輸入框
                 document.getElementById('userDataInput').value = '';
-            } catch (e) { alert("提交失敗"); }
+            } catch (e) { 
+                console.error("Submit Error:", e);
+                alert("提交失敗"); 
+            }
         }
 
         async function uploadFile(file) {
@@ -198,15 +205,20 @@
             const formData = new FormData();
             formData.append('file', file);
             try {
-                await fetch(`${API_URL}/upload`, { 
+                const res = await fetch(`${API_URL}/upload`, { 
                     method: 'POST', 
                     body: formData,
                     cache: 'no-cache'
                 });
+                
+                if (!res.ok) throw new Error('Upload failed');
+                
                 alert("文件上傳成功");
-                // 重置文件選擇框
                 document.getElementById('fileInput').value = '';
-            } catch (e) { alert("上傳失敗"); }
+            } catch (e) { 
+                console.error("Upload Error:", e);
+                alert("上傳失敗"); 
+            }
         }
     </script>
 </body>
