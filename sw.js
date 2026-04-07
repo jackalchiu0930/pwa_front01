@@ -1,30 +1,30 @@
 // --- 版本配置區 ---
-const FE_VERSION = '1.0.9';
-const BE_VERSION = '1.0.9';
-const AUTHOR = 'AIoT Center | Jackal.Chiu';
-const ORG = 'PSA華科事業群';
+const FE_VERSION = '1.1.0'; // 每次修改請更新版本號
+const BE_VERSION = '1.1.0';
 const CACHE_NAME = 'jackal-v' + FE_VERSION;
 
 const ASSETS = [
-  './', './Starting.html', './index.html', './test.html', './alerts.html',
-  './class.html', './about.html', './menu02.html', './classjoin.html', 
-  './classsful.html', './barcode.html', './barcodeclass.html',
-  './01_Starting.jpg', './Bg_JackalAIoT.jpg', './Icon_Jackal.jpg', 
-  './manifest.json', './sw.js'
+  './', 
+  './Starting.html', 
+  './test.html', 
+  './alerts.html',
+  './about.html',
+  './barcode.html',
+  './barcodeclass.html',
+  './Bg_JackalAIoT.jpg',
+  './sw.js'
 ];
 
-const getBackendBaseUrl = () => '';
-
+// 安裝 Service Worker
 self.addEventListener('install', (e) => {
-  console.log('[SW] 安裝新版本:', FE_VERSION);
   e.waitUntil(
     caches.open(CACHE_NAME).then(cache => cache.addAll(ASSETS))
       .then(() => self.skipWaiting())
   );
 });
 
+// 激活並清理舊快取
 self.addEventListener('activate', (e) => {
-  console.log('[SW] 激活新版本:', FE_VERSION);
   e.waitUntil(
     caches.keys().then(keys => Promise.all(
       keys.map(k => k !== CACHE_NAME ? caches.delete(k) : null)
@@ -32,20 +32,22 @@ self.addEventListener('activate', (e) => {
   );
 });
 
-self.addEventListener('push', (event) => {
-  let data = { title: 'Jackal AIoT', body: '設備通知' };
-  try { data = event.data.json(); } catch (e) {}
-  const options = {
-    body: data.body,
-    icon: './Icon_Jackal.jpg',
-    badge: './Icon_Jackal.jpg',
-    vibrate: [200, 100, 200],
-    data: { url: './alerts.html' }
-  };
-  event.waitUntil(self.registration.showNotification(data.title, options));
-});
+// 【關鍵修正】攔截請求處理
+self.addEventListener('fetch', (event) => {
+  const url = new URL(event.request.url);
 
-self.addEventListener('notificationclick', (event) => {
-  event.notification.close();
-  event.waitUntil(clients.openWindow(event.notification.data.url));
+  // 1. 如果是 API 請求（例如包含 /list, /alerts, /checkin），直接走網絡，不進快取
+  if (url.pathname.includes('/list') || 
+      url.pathname.includes('/alerts') || 
+      url.pathname.includes('/upload') || 
+      url.pathname.includes('/checkin')) {
+    return; // 讓請求直接發送到伺服器
+  }
+
+  // 2. 靜態資源使用「快取優先」策略
+  event.respondWith(
+    caches.match(event.request).then((response) => {
+      return response || fetch(event.request);
+    })
+  );
 });
