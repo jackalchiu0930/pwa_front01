@@ -1,6 +1,6 @@
 // --- 版本配置區 ---
-const FE_VERSION = '1.1.0'; // 每次修改請更新版本號
-const BE_VERSION = '1.1.0';
+const FE_VERSION = '1.1.1'; // 每次修改請更新版本號
+const BE_VERSION = '1.1.1';
 const CACHE_NAME = 'jackal-v' + FE_VERSION;
 
 const ASSETS = [
