@@ -626,11 +626,10 @@
         }
 
         // API地址配置
-        // const isLocal = window.location.hostname === 'localhost' || 
-        //                 window.location.hostname === '127.0.0.1' || 
-        //                 window.location.hostname === '172.20.10.3';
-        // const API_URL = isLocal ? "http://172.20.10.3:8000" : "https://jackalchiu.onrender.com";
-        const API_URL = '';   // 使用相對路徑（推薦）
+        const isLocal = window.location.hostname === 'localhost' || 
+                        window.location.hostname === '127.0.0.1' || 
+                        window.location.hostname === '172.20.10.3';
+        const API_URL = isLocal ? "http://172.20.10.3:8000" : "https://jackalchiu.onrender.com";
 
         // 全局變量
         let currentDate = new Date();

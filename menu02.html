@@ -284,7 +284,7 @@
         <button class="ui-element btn btn-blue tap-target" onclick="location.href='class.html'">前後端驗證區</button>
         <button class="ui-element btn btn-blue tap-target" onclick="location.href='barcode.html'">掃碼功能測試</button>
         <!-- 按鈕3：課堂簽到 -->
-        <button class="ui-element btn btn-green tap-target" onclick="window.location.href='barcodeclass.html'">
+        <button class="ui-element btn btn-green tap-target" onclick="showScanSection()">
             <i class="fas fa-qrcode"></i> 課堂掃碼簽到
         </button>
 
@@ -351,11 +351,10 @@
         });
 
         // API地址配置
-        // const isLocal = window.location.hostname === 'localhost' || 
-        //                 window.location.hostname === '127.0.0.1' || 
-        //                 window.location.hostname === '172.20.10.3';
-        // const API_URL = isLocal ? "http://172.20.10.3:8000" : "https://jackalchiu.onrender.com";
-        const API_URL = '';   // 使用相對路徑（推薦）
+        const isLocal = window.location.hostname === 'localhost' || 
+                        window.location.hostname === '127.0.0.1' || 
+                        window.location.hostname === '172.20.10.3';
+        const API_URL = isLocal ? "http://172.20.10.3:8000" : "https://jackalchiu.onrender.com";
 
         // 初始化：檢查是否有歷史工號
         window.onload = function() {
