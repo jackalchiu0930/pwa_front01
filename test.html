@@ -59,22 +59,19 @@ async function getRandomNumber() {
     const display = document.getElementById('numberDisplay');
     display.innerText = "連線中...";
     try {
-        const res = await fetch('/list', {
+        const res = await fetch('/api/test_post', { // 必須對應後端的 /api/test_post
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ note: "系統請求隨機數" })
+            body: JSON.stringify({ note: "來自網頁的請求" })
         });
         
-        if (!res.ok) {
-            const errorText = await res.text();
-            throw new Error(`伺服器回應錯誤: ${res.status}`);
-        }
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
         
         const data = await res.json();
-        display.innerText = data;
+        display.innerText = data.random;
     } catch (e) { 
         display.innerText = "Error";
-        alert("連線失敗原因: " + e.message); 
+        alert("連線失敗: " + e.message); 
     }
 }
 
