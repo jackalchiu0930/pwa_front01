@@ -6,7 +6,7 @@
     <title>AIoT 控制面板</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        /* 基礎重置 - 嚴格對齊 Index */
+        /* 基礎重置 - 保持不變 */
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         body {
             font-family: -apple-system, sans-serif;
@@ -25,7 +25,7 @@
             background-size: cover; z-index: -1;
         }
 
-        /* 關鍵占位區：確保內容下移 */
+        /* 關鍵占位區 */
         .top-padding-spacer {
             width: 100%;
             height: 410px; 
@@ -53,7 +53,7 @@
             background: rgba(255, 255, 255, 0.4) !important;
         }
 
-        /* 容器樣式 - 對齊 Index 卡片效果 */
+        /* 容器樣式 */
         .container { 
             background: rgba(255, 255, 255, 0.2); 
             backdrop-filter: blur(15px); 
@@ -69,7 +69,6 @@
 
         h2 { font-size: 20px; margin-bottom: 20px; color: #4a90e2; }
 
-        /* UI 元素樣式 */
         .ui-element { width: 100%; padding: 14px; margin: 10px 0; border-radius: 12px; border: none; font-size: 16px; outline: none; }
         
         .btn { cursor: pointer; font-weight: 600; color: white; display: block; text-decoration: none; }
@@ -80,7 +79,7 @@
         .upload-section { margin-top: 15px; padding-top: 15px; border-top: 1px solid rgba(255,255,255,0.1); }
         .file-label { display: block; background: rgba(255,255,255,0.1); padding: 12px; border-radius: 10px; cursor: pointer; border: 1px solid rgba(255,255,255,0.2); font-size: 14px; color: #fff; }
 
-        /* 底部導航欄 - 嚴格對齊 Index */
+        /* 底部導航欄 */
         .nav-bar {
             position: fixed;
             bottom: 20px;
@@ -132,7 +131,7 @@
     </div>
 
     <nav class="nav-bar">
-        <a href="index.html" onclick="localStorage.setItem('from_internal_nav', 'true');" class="nav-item tap-target"><i class="fas fa-home"></i><span>Home</span></a>
+        <a href="index.html" class="nav-item tap-target"><i class="fas fa-home"></i><span>Home</span></a>
         <a href="alerts.html" class="nav-item tap-target"><i class="fas fa-bell"></i><span>Alerts</span></a>
         <div class="nav-item tap-target"><i class="fas fa-user"></i><span>Profile</span></div>
         <div class="nav-item tap-target"><i class="fas fa-cog"></i><span>Settings</span></div>
@@ -140,28 +139,25 @@
     </nav>
 
     <script>
-        // --- 零延時觸控邏輯 ---
+        // --- 觸控效果邏輯 ---
         const targets = document.querySelectorAll('.tap-target');
         targets.forEach(btn => {
             btn.addEventListener('touchstart', function() { this.classList.add('tapped'); }, { passive: true });
             const removeEffect = () => { setTimeout(() => btn.classList.remove('tapped'), 100); };
             btn.addEventListener('touchend', removeEffect);
             btn.addEventListener('touchcancel', removeEffect);
-            btn.addEventListener('mousedown', () => btn.classList.add('tapped'));
-            btn.addEventListener('mouseup', removeEffect);
         });
 
-        /**
-         * 【關鍵修復】
-         * 使用 window.location.origin 自動獲取當前環境的基礎 URL。
-         * 這樣無論是在本地 (http://172...) 還是在 Render (https://...) 
-         * 都能準確拼接出 API 的完整路徑，避免「連線失敗」問題。
-         */
+        // --- API 連線修復邏輯 ---
+        // 使用 window.location.origin 確保無論在 Render 還是本地都能抓到正確的後端位址
         const API_URL = window.location.origin;
         
         async function getRandomNumber() {
+            const display = document.getElementById('numberDisplay');
+            display.innerText = "連線中...";
+            
             try {
-                // 拼接完整路徑確保連線穩定
+                // 加入 cache: 'no-cache' 避免被 PWA/Service Worker 攔截舊數據
                 const res = await fetch(`${API_URL}/list`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -169,13 +165,16 @@
                     cache: 'no-cache'
                 });
                 
-                if (!res.ok) throw new Error('Network response was not ok');
+                if (!res.ok) {
+                    throw new Error(`伺服器回應錯誤: ${res.status}`);
+                }
                 
                 const data = await res.json();
-                document.getElementById('numberDisplay').innerText = data;
+                display.innerText = data;
             } catch (e) { 
                 console.error("Fetch Error:", e);
-                alert("連線失敗，請檢查網路或後端狀態"); 
+                display.innerText = "Error";
+                alert("連線失敗原因: " + e.message); 
             }
         }
 
@@ -189,15 +188,10 @@
                     body: JSON.stringify({ note: val }),
                     cache: 'no-cache'
                 });
-                
-                if (!res.ok) throw new Error('Submit failed');
-                
+                if (!res.ok) throw new Error(res.status);
                 alert("提交成功");
                 document.getElementById('userDataInput').value = '';
-            } catch (e) { 
-                console.error("Submit Error:", e);
-                alert("提交失敗"); 
-            }
+            } catch (e) { alert("提交失敗: " + e.message); }
         }
 
         async function uploadFile(file) {
@@ -210,15 +204,10 @@
                     body: formData,
                     cache: 'no-cache'
                 });
-                
-                if (!res.ok) throw new Error('Upload failed');
-                
+                if (!res.ok) throw new Error(res.status);
                 alert("文件上傳成功");
                 document.getElementById('fileInput').value = '';
-            } catch (e) { 
-                console.error("Upload Error:", e);
-                alert("上傳失敗"); 
-            }
+            } catch (e) { alert("上傳失敗: " + e.message); }
         }
     </script>
 </body>
